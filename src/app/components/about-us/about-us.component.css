@@ -1,0 +1,128 @@
+.about-us-section {
+    background-color: #1a1a1a;
+    color: white;
+    padding: 60px 0;
+  }
+  
+  .about-us-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  
+  .about-us-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .about-us-logo {
+    margin-bottom: 24px;
+    max-width: 200px;
+  }
+  
+  .about-us-logo img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .about-us-text h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  
+  .tagline {
+    font-size: 18px;
+    color: #e0e0e0;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  
+  .description {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .cta-container {
+    background-color: rgba(255, 77, 77, 0.1);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+    border-left: 4px solid #ff4d4d;
+  }
+  
+  .cta-container h3 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .cta-container p {
+    margin-bottom: 24px;
+    font-size: 16px;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  
+  .cta-primary {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cta-primary:hover {
+    background-color: #ff3333;
+  }
+  
+  .cta-secondary {
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cta-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  @media (min-width: 768px) {
+    .about-us-content {
+      flex-direction: row;
+      text-align: left;
+      align-items: flex-start;
+    }
+  
+    .about-us-logo {
+      margin-right: 40px;
+      margin-bottom: 0;
+    }
+  
+    .description {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+  

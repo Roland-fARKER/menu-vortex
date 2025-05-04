@@ -1,0 +1,108 @@
+<div
+  class="carrito-overlay"
+  [class.abierto]="abierto"
+  (click)="cerrarCarrito()"
+></div>
+
+<div class="carrito-panel" [class.abierto]="abierto">
+  <div class="carrito-header">
+    <h2>Tu Pedido</h2>
+    <button class="cerrar-btn" (click)="cerrarCarrito()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="carrito-contenido">
+    <div *ngIf="itemsCarrito.length === 0" class="carrito-vacio">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="carrito-icono"
+      >
+        <circle cx="8" cy="21" r="1"></circle>
+        <circle cx="19" cy="21" r="1"></circle>
+        <path
+          d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+        ></path>
+      </svg>
+      <p>Tu carrito está vacío</p>
+      <p class="subtexto">Agrega algunos productos para comenzar</p>
+    </div>
+
+    <div *ngIf="itemsCarrito.length > 0" class="carrito-items">
+      <div *ngFor="let item of itemsCarrito" class="carrito-item">
+        <div class="item-imagen">
+          <img [src]="item.producto.imagen" [alt]="item.producto.nombre" />
+        </div>
+        <div class="item-detalles">
+          <h3>{{ item.producto.nombre }}</h3>
+          <p>C$ {{ item.producto.precio }}</p>
+        </div>
+        <div class="item-cantidad">
+          <button class="cantidad-btn" (click)="eliminarItem(item.producto.id)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <span>{{ item.cantidad }}</span>
+          <button class="cantidad-btn" (click)="agregarItem(item)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="itemsCarrito.length > 0" class="carrito-footer">
+    <div class="total">
+      <span>Total:</span>
+      <span>C$ {{ total }}</span>
+    </div>
+    <button class="pedir-btn" (click)="realizarPedido()">
+      Realizar Pedido
+    </button>
+  </div>
+</div>

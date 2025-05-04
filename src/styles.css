@@ -1,1 +1,94 @@
 /* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+/* Estilos globales */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+  /* Variables para tema claro (valores por defecto) */
+  --bg-color: #f9f9f9;
+  --bg-secondary: #ffffff;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --border-color: #e2e2e2;
+  --hover-color: rgba(0, 0, 0, 0.05);
+  --primary-color: #ff4d4d;
+  --primary-hover: #ff3333;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --footer-bg: #1a1a1a;
+  --footer-text: #ffffff;
+  --about-bg: #1a1a1a;
+  --about-text: #ffffff;
+}
+
+/* Tema oscuro */
+.dark-theme {
+  --bg-color: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-color: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #333333;
+  --hover-color: rgba(255, 255, 255, 0.05);
+  --primary-color: #ff4d4d;
+  --primary-hover: #ff3333;
+  --header-bg: #1a1a1a;
+  --card-bg: #1e1e1e;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --footer-bg: #1a1a1a;
+  --footer-text: #ffffff;
+  --about-bg: #1a1a1a;
+  --about-text: #ffffff;
+}
+
+/* Tema claro */
+.light-theme {
+  --bg-color: #f9f9f9;
+  --bg-secondary: #ffffff;
+  --text-color: #333333;
+  --text-secondary: #666666;
+  --border-color: #e2e2e2;
+  --hover-color: rgba(0, 0, 0, 0.05);
+  --primary-color: #ff4d4d;
+  --primary-hover: #ff3333;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --footer-bg: #1a1a1a;
+  --footer-text: #ffffff;
+  --about-bg: #1a1a1a;
+  --about-text: #ffffff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Transición suave para todos los elementos */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, box-shadow 0.3s ease;
+}

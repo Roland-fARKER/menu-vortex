@@ -1,0 +1,296 @@
+<div class="products-container">
+  <div class="page-header">
+    <h1>Gestión de Productos</h1>
+    <button class="add-button" (click)="openForm()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Agregar Producto
+    </button>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Buscar productos..."
+      />
+    </div>
+
+    <div class="category-filter">
+      <label for="categoria">Filtrar por categoría:</label>
+      <select id="categoria" [(ngModel)]="categoriaFiltro">
+        <option value="todas">Todas las categorías</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.id">
+          {{ categoria.nombre }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="products-list">
+    <table>
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of productosFiltrados">
+          <td class="product-image">
+            <img [src]="producto.imagen" [alt]="producto.nombre" />
+          </td>
+          <td>{{ producto.nombre }}</td>
+          <td>{{ getCategoriaNombre(producto.categoria) }}</td>
+          <td>C$ {{ producto.precio }} </td>
+          <td class="actions">
+            <button class="edit-btn" (click)="openForm(producto)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                ></path>
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                ></path>
+              </svg>
+            </button>
+            <button class="delete-btn" (click)="deleteProducto(producto.id)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                ></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="productosFiltrados.length === 0">
+          <td colspan="5" class="no-results">
+            No se encontraron productos que coincidan con la búsqueda.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de formulario -->
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-overlay" (click)="closeForm()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ isEditing ? "Editar Producto" : "Agregar Nuevo Producto" }}</h2>
+        <button class="close-btn" (click)="closeForm()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form
+        [formGroup]="productoForm"
+        (ngSubmit)="onSubmit()"
+        class="product-form"
+      >
+        <div class="form-group">
+          <label for="nombre">Nombre del Producto</label>
+          <input
+            type="text"
+            id="nombre"
+            formControlName="nombre"
+            placeholder="Ej: Hamburguesa Clásica"
+            [class.error]="
+              productoForm.get('nombre')?.invalid &&
+              productoForm.get('nombre')?.touched
+            "
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              productoForm.get('nombre')?.invalid &&
+              productoForm.get('nombre')?.touched
+            "
+          >
+            <span *ngIf="productoForm.get('nombre')?.errors?.['required']"
+              >El nombre es obligatorio</span
+            >
+            <span *ngIf="productoForm.get('nombre')?.errors?.['minlength']"
+              >El nombre debe tener al menos 3 caracteres</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="precio">Precio (MXN)</label>
+          <input
+            type="number"
+            id="precio"
+            formControlName="precio"
+            min="1"
+            step="0.01"
+            [class.error]="
+              productoForm.get('precio')?.invalid &&
+              productoForm.get('precio')?.touched
+            "
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              productoForm.get('precio')?.invalid &&
+              productoForm.get('precio')?.touched
+            "
+          >
+            <span *ngIf="productoForm.get('precio')?.errors?.['required']"
+              >El precio es obligatorio</span
+            >
+            <span *ngIf="productoForm.get('precio')?.errors?.['min']"
+              >El precio debe ser mayor a 0</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Describe el producto..."
+            [class.error]="
+              productoForm.get('descripcion')?.invalid &&
+              productoForm.get('descripcion')?.touched
+            "
+          ></textarea>
+          <div
+            class="error-message"
+            *ngIf="
+              productoForm.get('descripcion')?.invalid &&
+              productoForm.get('descripcion')?.touched
+            "
+          >
+            <span *ngIf="productoForm.get('descripcion')?.errors?.['required']"
+              >La descripción es obligatoria</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoría</label>
+          <select
+            id="categoria"
+            formControlName="categoria"
+            [class.error]="
+              productoForm.get('categoria')?.invalid &&
+              productoForm.get('categoria')?.touched
+            "
+          >
+            <option value="" disabled>Selecciona una categoría</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria.id">
+              {{ categoria.nombre }}
+            </option>
+          </select>
+          <div
+            class="error-message"
+            *ngIf="
+              productoForm.get('categoria')?.invalid &&
+              productoForm.get('categoria')?.touched
+            "
+          >
+            <span *ngIf="productoForm.get('categoria')?.errors?.['required']"
+              >La categoría es obligatoria</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imagen">URL de la Imagen</label>
+          <input
+            type="text"
+            id="imagen"
+            formControlName="imagen"
+            placeholder="URL de la imagen"
+          />
+          <p class="help-text">
+            Deja el valor por defecto para usar una imagen de marcador de
+            posición.
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeForm()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="productoForm.invalid"
+          >
+            {{ isEditing ? "Actualizar Producto" : "Guardar Producto" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
