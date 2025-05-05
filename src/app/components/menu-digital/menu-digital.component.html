@@ -18,15 +18,24 @@
     <!-- Categorías -->
     <div class="categorias">
       <ul>
+        <li>
+          <button
+            [class.active]="categoriaActiva === 'todas'"
+            (click)="cambiarCategoria('todas')"
+          >
+            Todas
+          </button>
+        </li>
         <li *ngFor="let categoria of categorias">
           <button
             [class.active]="categoriaActiva === categoria.id"
-            (click)="cambiarCategoria(categoria.id)"
+            (click)="cambiarCategoria(categoria.id ?? '')"
           >
             {{ categoria.nombre }}
           </button>
         </li>
       </ul>
+      
     </div>
 
     <!-- Productos -->

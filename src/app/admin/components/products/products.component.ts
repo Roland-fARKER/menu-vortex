@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductosService } from '../../../services/productos.service';
 import { Producto, Categoria } from '../../../models/producto.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CategoriesService } from '../../../services/categories.service';
 
 @Component({
   selector: 'app-products',
@@ -23,20 +24,28 @@ export class ProductsComponent implements OnInit {
 
   constructor(
     private productosService: ProductosService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private categoriasService: CategoriesService
   ) {
     this.productoForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       precio: [0, [Validators.required, Validators.min(1)]],
       descripcion: ['', [Validators.required]],
       categoria: ['', [Validators.required]],
-      imagen: ['assets/placeholder.png'],
+      imagen: ['assets/placeholder.webp'],
     });
   }
 
   ngOnInit(): void {
-    this.productos = this.productosService.obtenerProductos();
-    this.categorias = this.productosService.obtenerCategorias();
+    this.productosService.obtenerProductos().subscribe((data) => {
+      this.productos = data;
+    });
+
+    this.categoriasService.obtenerCategorias().subscribe((categorias) => {
+      this.categorias = categorias;
+    });
+
+    console.log(this.categorias); // Para depuración
   }
 
   get productosFiltrados(): Producto[] {
@@ -56,7 +65,7 @@ export class ProductsComponent implements OnInit {
 
     if (producto) {
       this.isEditing = true;
-      this.currentProductId = producto.id;
+      this.currentProductId = producto.id ?? null;
       this.productoForm.patchValue({
         nombre: producto.nombre,
         precio: producto.precio,
@@ -82,32 +91,24 @@ export class ProductsComponent implements OnInit {
   onSubmit(): void {
     if (this.productoForm.valid) {
       const productoData = this.productoForm.value;
-
+  
       if (this.isEditing && this.currentProductId !== null) {
-        // Actualizar producto existente
         const productoActualizado: Producto = {
           id: this.currentProductId,
           ...productoData,
         };
-
-
-        const index = this.productos.findIndex(
-          (p) => p.id === this.currentProductId
-        );
-        if (index !== -1) {
-          this.productos[index] = productoActualizado;
-        }
+  
+        this.productosService.actualizarProducto(productoActualizado.id?.toString() || '', productoActualizado).then(() => {
+          const index = this.productos.findIndex(p => p.id === this.currentProductId);
+          this.closeForm();
+        });
+  
       } else {
-        // Crear nuevo producto
-        const nuevoProducto: Producto = {
-          id: this.getNextId(),
-          ...productoData,
-        };
-
-        this.productos.push(nuevoProducto);
+        this.productosService.crearProducto(productoData).then((nuevoProducto) => {
+          this.productos.push(nuevoProducto);
+          this.closeForm();
+        });
       }
-
-      this.closeForm();
     }
   }
 
@@ -118,8 +119,12 @@ export class ProductsComponent implements OnInit {
   }
 
   // Método auxiliar para generar IDs únicos
-  private getNextId(): number {
-    return Math.max(0, ...this.productos.map((p) => p.id)) + 1;
+  private getNextId( id: number): void {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+      this.productosService.eliminarProducto(id.toString()).then(() => {
+        this.productos = this.productos.filter(p => p.id !== id);
+      });
+    }
   }
 
   getCategoriaNombre(categoriaId: string): string {

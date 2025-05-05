@@ -59,7 +59,10 @@
           <p>C$ {{ item.producto.precio }}</p>
         </div>
         <div class="item-cantidad">
-          <button class="cantidad-btn" (click)="eliminarItem(item.producto.id)">
+          <button
+            class="cantidad-btn"
+            (click)="item.producto.id !== undefined && eliminarItem(item.producto.id)"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

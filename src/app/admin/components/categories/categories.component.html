@@ -1,0 +1,225 @@
+<div class="categories-container">
+  <div class="page-header">
+    <h1>Gestión de Categorías</h1>
+    <button class="add-button" (click)="openForm()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Agregar Categoría
+    </button>
+  </div>
+
+  <div class="search-box">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Buscar categorías..."
+    />
+  </div>
+
+  <div class="categories-grid">
+    <div class="category-card" *ngFor="let categoria of categoriasFiltradas">
+      <div
+        class="category-icon"
+        [innerHTML]="getCategoryIcon(categoria.icono)"
+      ></div>
+      <div class="category-content">
+        <h3>{{ categoria.nombre }}</h3>
+        <p *ngIf="categoria.descripcion">{{ categoria.descripcion }}</p>
+        <div class="category-meta">
+          <span class="product-count">
+            {{ productCountMap.get(categoria.id ?? '') || 0 }} productos
+          </span>
+        </div>
+      </div>
+      <div class="category-actions">
+        <button class="edit-btn" (click)="openForm(categoria)">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+            ></path>
+            <path
+              d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+            ></path>
+          </svg>
+        </button>
+        <button class="delete-btn" (click)="deleteCategoria(categoria.id ?? '')">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            ></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="no-results" *ngIf="categoriasFiltradas.length === 0">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <p>No se encontraron categorías</p>
+      <button class="add-button" (click)="openForm()">
+        Agregar una categoría
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de formulario -->
+  <div class="modal" *ngIf="showForm">
+    <div class="modal-overlay" (click)="closeForm()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>
+          {{ isEditing ? "Editar Categoría" : "Agregar Nueva Categoría" }}
+        </h2>
+        <button class="close-btn" (click)="closeForm()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form
+        [formGroup]="categoriaForm"
+        (ngSubmit)="onSubmit()"
+        class="category-form"
+      >
+        <div class="form-group">
+          <label for="nombre">Nombre de la Categoría</label>
+          <input
+            type="text"
+            id="nombre"
+            formControlName="nombre"
+            placeholder="Ej: Hamburguesas"
+            [class.error]="
+              categoriaForm.get('nombre')?.invalid &&
+              categoriaForm.get('nombre')?.touched
+            "
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              categoriaForm.get('nombre')?.invalid &&
+              categoriaForm.get('nombre')?.touched
+            "
+          >
+            <span *ngIf="categoriaForm.get('nombre')?.errors?.['required']"
+              >El nombre es obligatorio</span
+            >
+            <span *ngIf="categoriaForm.get('nombre')?.errors?.['minlength']"
+              >El nombre debe tener al menos 3 caracteres</span
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción (opcional)</label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Describe la categoría..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="icono">Icono (opcional)</label>
+          <select id="icono" formControlName="icono">
+            <option value="">Sin icono</option>
+            <option value="hamburguesa">Hamburguesa</option>
+            <option value="pizza">Pizza</option>
+            <option value="bebida">Bebida</option>
+            <option value="postre">Postre</option>
+          </select>
+          <p class="help-text">
+            Selecciona un icono para representar esta categoría.
+          </p>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-btn" (click)="closeForm()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="save-btn"
+            [disabled]="categoriaForm.invalid"
+          >
+            {{ isEditing ? "Actualizar Categoría" : "Guardar Categoría" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

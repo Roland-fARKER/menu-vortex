@@ -1,0 +1,563 @@
+<div class="settings-container">
+  <div class="page-header">
+    <h1>Configuración</h1>
+  </div>
+
+  <div class="settings-layout">
+    <!-- Sidebar de navegación -->
+    <div class="settings-sidebar">
+      <div class="settings-nav">
+        <button
+          class="nav-item"
+          [class.active]="activeSection === 'general'"
+          (click)="setActiveSection('general')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+            ></path>
+          </svg>
+          <span>General</span>
+        </button>
+
+        <button
+          class="nav-item"
+          [class.active]="activeSection === 'display'"
+          (click)="setActiveSection('display')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>Visualización</span>
+        </button>
+
+        <button
+          class="nav-item"
+          [class.active]="activeSection === 'notifications'"
+          (click)="setActiveSection('notifications')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span>Notificaciones</span>
+        </button>
+
+        <button
+          class="nav-item"
+          [class.active]="activeSection === 'privacy'"
+          (click)="setActiveSection('privacy')"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Privacidad</span>
+        </button>
+      </div>
+
+      <div class="theme-section">
+        <h3>Tema</h3>
+        <div class="theme-toggle-wrapper">
+          <span>{{ currentTheme === "light" ? "Claro" : "Oscuro" }}</span>
+          <app-theme-toggle></app-theme-toggle>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="settings-content">
+      <!-- Configuración General -->
+      <div class="settings-section" *ngIf="activeSection === 'general'">
+        <div class="section-header">
+          <h2>Configuración General</h2>
+          <p>Configura los ajustes básicos de tu menú digital.</p>
+        </div>
+
+        <form [formGroup]="generalForm" (ngSubmit)="saveSettings()">
+          <div class="success-message" *ngIf="saveSuccess">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Configuración guardada correctamente</span>
+          </div>
+
+          <div class="form-group">
+            <label for="businessName">Nombre del Negocio</label>
+            <input
+              type="text"
+              id="businessName"
+              formControlName="businessName"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="language">Idioma</label>
+            <select id="language" formControlName="language">
+              <option *ngFor="let lang of languages" [value]="lang.value">
+                {{ lang.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="currency">Moneda</label>
+            <select id="currency" formControlName="currency">
+              <option *ngFor="let curr of currencies" [value]="curr.value">
+                {{ curr.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="timeZone">Zona Horaria</label>
+            <select id="timeZone" formControlName="timeZone">
+              <option value="America/Mexico_City">
+                Ciudad de México (GMT-6)
+              </option>
+              <option value="America/New_York">Nueva York (GMT-5)</option>
+              <option value="America/Los_Angeles">Los Ángeles (GMT-8)</option>
+              <option value="Europe/Madrid">Madrid (GMT+1)</option>
+              <option value="Europe/London">Londres (GMT+0)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="orderPrefix">Prefijo de Órdenes</label>
+            <input type="text" id="orderPrefix" formControlName="orderPrefix" />
+            <p class="help-text">
+              Este prefijo se usará para generar los números de orden (ej.
+              ORD-001)
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              (click)="resetToDefaults()"
+            >
+              Restablecer
+            </button>
+            <button type="submit" class="primary-button" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Guardar Cambios</span>
+              <div *ngIf="isLoading" class="spinner"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Configuración de Visualización -->
+      <div class="settings-section" *ngIf="activeSection === 'display'">
+        <div class="section-header">
+          <h2>Configuración de Visualización</h2>
+          <p>Personaliza cómo se muestra tu menú a los clientes.</p>
+        </div>
+
+        <form [formGroup]="displayForm" (ngSubmit)="saveSettings()">
+          <div class="success-message" *ngIf="saveSuccess">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Configuración guardada correctamente</span>
+          </div>
+
+          <div class="form-group">
+            <label for="menuLayout">Diseño del Menú</label>
+            <select id="menuLayout" formControlName="menuLayout">
+              <option *ngFor="let layout of menuLayouts" [value]="layout.value">
+                {{ layout.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="itemsPerPage">Productos por Página</label>
+            <input
+              type="number"
+              id="itemsPerPage"
+              formControlName="itemsPerPage"
+              min="4"
+              max="24"
+            />
+          </div>
+
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <label for="showPrices">Mostrar Precios</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="showPrices"
+                  formControlName="showPrices"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="showImages">Mostrar Imágenes</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="showImages"
+                  formControlName="showImages"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="showDescriptions">Mostrar Descripciones</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="showDescriptions"
+                  formControlName="showDescriptions"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="enableAnimations">Habilitar Animaciones</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="enableAnimations"
+                  formControlName="enableAnimations"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="enableFeaturedItems"
+                >Habilitar Productos Destacados</label
+              >
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="enableFeaturedItems"
+                  formControlName="enableFeaturedItems"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              (click)="resetToDefaults()"
+            >
+              Restablecer
+            </button>
+            <button type="submit" class="primary-button" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Guardar Cambios</span>
+              <div *ngIf="isLoading" class="spinner"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Configuración de Notificaciones -->
+      <div class="settings-section" *ngIf="activeSection === 'notifications'">
+        <div class="section-header">
+          <h2>Configuración de Notificaciones</h2>
+          <p>Configura cómo y cuándo recibir notificaciones.</p>
+        </div>
+
+        <form [formGroup]="notificationsForm" (ngSubmit)="saveSettings()">
+          <div class="success-message" *ngIf="saveSuccess">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Configuración guardada correctamente</span>
+          </div>
+
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <label for="enableEmailNotifications"
+                >Notificaciones por Email</label
+              >
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="enableEmailNotifications"
+                  formControlName="enableEmailNotifications"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="enablePushNotifications">Notificaciones Push</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="enablePushNotifications"
+                  formControlName="enablePushNotifications"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="settings-subheader">Eventos de Notificación</h3>
+
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <label for="notifyOnNewOrder">Nuevos Pedidos</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="notifyOnNewOrder"
+                  formControlName="notifyOnNewOrder"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="notifyOnCancelledOrder">Pedidos Cancelados</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="notifyOnCancelledOrder"
+                  formControlName="notifyOnCancelledOrder"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="notifyOnLowStock">Inventario Bajo</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="notifyOnLowStock"
+                  formControlName="notifyOnLowStock"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="dailySummary">Resumen Diario</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="dailySummary"
+                  formControlName="dailySummary"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              (click)="resetToDefaults()"
+            >
+              Restablecer
+            </button>
+            <button type="submit" class="primary-button" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Guardar Cambios</span>
+              <div *ngIf="isLoading" class="spinner"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Configuración de Privacidad -->
+      <div class="settings-section" *ngIf="activeSection === 'privacy'">
+        <div class="section-header">
+          <h2>Configuración de Privacidad</h2>
+          <p>Administra la privacidad y el manejo de datos.</p>
+        </div>
+
+        <form [formGroup]="privacyForm" (ngSubmit)="saveSettings()">
+          <div class="success-message" *ngIf="saveSuccess">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Configuración guardada correctamente</span>
+          </div>
+
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <label for="collectAnalytics">Recopilar Datos Analíticos</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="collectAnalytics"
+                  formControlName="collectAnalytics"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="shareDataWithPartners"
+                >Compartir Datos con Socios</label
+              >
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="shareDataWithPartners"
+                  formControlName="shareDataWithPartners"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="storeCustomerData">Almacenar Datos de Clientes</label>
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="storeCustomerData"
+                  formControlName="storeCustomerData"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+
+            <div class="toggle-item">
+              <label for="cookieConsent"
+                >Solicitar Consentimiento de Cookies</label
+              >
+              <div class="toggle-switch">
+                <input
+                  type="checkbox"
+                  id="cookieConsent"
+                  formControlName="cookieConsent"
+                />
+                <span class="toggle-slider"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dataRetentionDays">Retención de Datos (días)</label>
+            <input
+              type="number"
+              id="dataRetentionDays"
+              formControlName="dataRetentionDays"
+              min="30"
+              max="365"
+            />
+            <p class="help-text">
+              Número de días que se conservarán los datos de los clientes.
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="secondary-button"
+              (click)="resetToDefaults()"
+            >
+              Restablecer
+            </button>
+            <button type="submit" class="primary-button" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Guardar Cambios</span>
+              <div *ngIf="isLoading" class="spinner"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,7 +21,9 @@ export class DashboardComponent {
       this.businessName = state.business?.name || '';
     });
 
-    this.totalProducts = this.productosService.obtenerProductos().length;
+    this.productosService.obtenerProductos().subscribe((productos) => {
+      this.totalProducts = productos.length;
+    });
     this.totalCategories = this.productosService.obtenerCategorias().length;
   }
 }

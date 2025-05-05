@@ -10,9 +10,7 @@ import {
 import { CarritoService } from '../../services/carrito.service';
 import { ProductosService } from '../../services/productos.service';
 import type { Categoria, Producto } from '../../models/producto.model';
-import { HeaderComponent } from '../header/header.component';
-import { ProductoCardComponent } from '../producto-card/producto-card.component';
-import { CarritoComponent } from '../carrito/carrito.component';
+import { CategoriesService } from '../../services/categories.service';
 
 @Component({
   selector: 'app-menu-digital',
@@ -48,26 +46,40 @@ export class MenuDigitalComponent implements OnInit {
 
   constructor(
     private carritoService: CarritoService,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private categoriasService: CategoriesService  
   ) {}
 
   ngOnInit(): void {
-    this.productos = this.productosService.obtenerProductos();
-    this.categorias = this.productosService.obtenerCategorias();
-    this.actualizarProductosFiltrados();
-
-    this.productosService.categoriaActiva$.subscribe((categoria) => {
-      this.categoriaActiva = categoria;
-      this.actualizarProductosFiltrados();
+    this.productosService.obtenerProductos().subscribe((productos) => {
+      this.productos = productos;
     });
+    
+
+    this.categoriasService.obtenerCategorias().subscribe((cates) => {
+      this.categorias = cates;
+      console.log(this.categorias); // Para depuración
+      this.actualizarProductosFiltrados();
+    } )
+
   }
 
   actualizarProductosFiltrados(): void {
-    this.productosFiltrados = this.productosService.obtenerProductosFiltrados();
+    this.productosService.obtenerProductos().subscribe((productos) => {
+      this.productosFiltrados = productos;
+    });
   }
 
-  cambiarCategoria(categoria: string): void {
-    this.productosService.cambiarCategoria(categoria);
+  cambiarCategoria(categoriaId: string): void {
+    this.categoriaActiva = categoriaId;
+
+  if (categoriaId === 'todas') {
+    this.productosFiltrados = this.productos;
+  } else {
+    this.productosFiltrados = this.productos.filter(
+      (producto) => producto.categoria === categoriaId
+    );
+  }
   }
 
   agregarAlCarrito(producto: Producto): void {
@@ -75,7 +87,7 @@ export class MenuDigitalComponent implements OnInit {
   }
 
   toggleCarrito(): void {
-    this.carritoAbierto = !this.carritoAbierto
-    console.log("Carrito abierto:", this.carritoAbierto) // Para depuración
+    this.carritoAbierto = !this.carritoAbierto;
+    console.log('Carrito abierto:', this.carritoAbierto); 
   }
 }

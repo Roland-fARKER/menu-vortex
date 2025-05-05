@@ -19,7 +19,6 @@
       Agregar Producto
     </button>
   </div>
-
   <div class="filters">
     <div class="search-box">
       <svg
@@ -55,7 +54,7 @@
   </div>
 
   <div class="products-list">
-    <table>
+    <table *ngIf="productosFiltrados.length > 0">
       <thead>
         <tr>
           <th>Imagen</th>
@@ -94,7 +93,7 @@
                 ></path>
               </svg>
             </button>
-            <button class="delete-btn" (click)="deleteProducto(producto.id)">
+            <button class="delete-btn" (click)="deleteProducto(producto.id || 0)">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"

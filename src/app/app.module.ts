@@ -16,6 +16,11 @@ import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.com
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { FormsModule } from "@angular/forms"
 
+import { environment } from './environments/environment';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,10 +37,21 @@ import { FormsModule } from "@angular/forms"
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ButtonModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [],
+  providers: [
+    provideFirebaseApp(() =>
+      initializeApp({
+        projectId: 'nova-b364a',
+        appId: '1:544247291865:web:d178a325973e108064c3c8',
+        storageBucket: 'nova-b364a.appspot.com',
+        apiKey: 'AIzaSyAhkUROIiimbCWM_tuI-Ahq15dJmqTE1-s',
+        authDomain: 'nova-b364a.firebaseapp.com',
+        messagingSenderId: '544247291865',
+      })
+    ),
+    provideFirestore(() => getFirestore()),
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
