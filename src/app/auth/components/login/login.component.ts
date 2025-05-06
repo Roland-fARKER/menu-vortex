@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../../services/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -36,6 +38,14 @@ export class LoginComponent {
         this.router.navigate(['/admin/dashboard']);
       }
     });
+  }
+
+  ngOnInit(): void {
+    // Aplicar el tema actual al body para que afecte a este componente
+    this.themeService.theme$.subscribe((theme) => {
+      document.body.classList.remove("light-theme", "dark-theme")
+      document.body.classList.add(`${theme}-theme`)
+    })
   }
 
   onSubmit(): void {

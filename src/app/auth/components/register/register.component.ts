@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { User, Business } from '../../../models/auth.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ThemeService } from '../../../services/theme.service';
 @Component({
   selector: 'app-register',
   standalone: false,
@@ -26,7 +27,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
   ) {
     // Inicializar formulario de propietario
     this.ownerForm = this.fb.group(
@@ -62,6 +64,12 @@ export class RegisterComponent {
   }
 
   ngOnInit(): void {
+    // Aplicar el tema actual al body para que afecte a este componente
+    this.themeService.theme$.subscribe((theme) => {
+      document.body.classList.remove("light-theme", "dark-theme")
+      document.body.classList.add(`${theme}-theme`)
+    })
+
     // Verificar si el usuario ya está autenticado
     this.authService.authState$.subscribe((state) => {
       this.isLoading = state.isLoading;
