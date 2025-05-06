@@ -1,33 +1,14 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject } from "rxjs"
 import { SocialMedia, MapLocation } from "../models/social-media"
+import { Firestore, collection, query, where, getDocs } from "@angular/fire/firestore"
+import { Business } from "../models/auth.model"
 
 @Injectable({
   providedIn: "root",
 })
 export class BusinessInfoService {
-  // Datos iniciales de redes sociales
-  private initialSocialMedia: SocialMedia[] = [
-    {
-      id: "facebook",
-      name: "Facebook",
-      url: "https://facebook.com/vortex",
-      icon: "facebook",
-    },
-    {
-      id: "instagram",
-      name: "Instagram",
-      url: "https://instagram.com/vortex",
-      icon: "instagram",
-    },
-    {
-      id: "twitter",
-      name: "Twitter",
-      url: "https://twitter.com/vortex",
-      icon: "twitter",
-    },
-  ]
-
+  
   // Ubicación inicial del mapa
   private initialLocation: MapLocation = {
     lat: 19.4326,
@@ -38,20 +19,16 @@ export class BusinessInfoService {
   }
 
   // BehaviorSubjects para las redes sociales y la ubicación
-  private socialMediaSubject = new BehaviorSubject<SocialMedia[]>(this.getSavedSocialMedia())
+  private socialMediaSubject = new BehaviorSubject<SocialMedia[]>(this.getSocialMedia())
   socialMedia$ = this.socialMediaSubject.asObservable()
 
   private locationSubject = new BehaviorSubject<MapLocation>(this.getSavedLocation())
   location$ = this.locationSubject.asObservable()
 
-  constructor() {}
+  constructor(private firestore: Firestore) {}
 
   // Métodos para obtener datos guardados o usar los iniciales
-  private getSavedSocialMedia(): SocialMedia[] {
-    const saved = localStorage.getItem("socialMedia")
-    return saved ? JSON.parse(saved) : this.initialSocialMedia
-  }
-
+  
   private getSavedLocation(): MapLocation {
     const saved = localStorage.getItem("mapLocation")
     return saved ? JSON.parse(saved) : this.initialLocation
@@ -94,4 +71,17 @@ export class BusinessInfoService {
     this.locationSubject.next(updated)
     localStorage.setItem("mapLocation", JSON.stringify(updated))
   }
+
+  async getBusinessBySlug(slug: string): Promise<Business | null> {
+    const businessesRef = collection(this.firestore, 'businesses')
+    const q = query(businessesRef, where('slug', '==', slug))
+    const snapshot = await getDocs(q)
+
+    if (!snapshot.empty) {
+      return snapshot.docs[0].data() as Business
+    }
+
+    return null
+  }
+  // Removed unused method
 }

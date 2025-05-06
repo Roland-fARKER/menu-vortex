@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Output  } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ThemeService } from '../../services/theme.service';
+import { AuthService } from '../../auth/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -22,16 +25,55 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class HeaderComponent {
   animarCarrito = false
+  isMenuOpen = false
+  isAuthenticated = false
+  currentTheme: "light" | "dark" = "light"
+
   @Output() toggleCarritoEvent = new EventEmitter<void>()
 
-  constructor(public carritoService: CarritoService) {
-    this.carritoService.animarCarrito$.subscribe((animar) => {
+  constructor(
+    public carritoService: CarritoService,
+    private themeService: ThemeService,
+    private authService: AuthService,
+    private router: Router,
+  ) {
+    this.carritoService.animarCarrito$.subscribe((animar: boolean) => {
       this.animarCarrito = animar
+    })
+  }
+
+  ngOnInit(): void {
+    // Suscribirse al tema actual
+    this.themeService.theme$.subscribe((theme) => {
+      this.currentTheme = theme
+    })
+
+    // Verificar estado de autenticación
+    this.authService.authState$.subscribe((state) => {
+      this.isAuthenticated = state.isAuthenticated
     })
   }
 
   toggleCarrito(): void {
     this.toggleCarritoEvent.emit()
-    console.log("Carrito abierto:", this.carritoService.carrito$)
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route])
+    this.closeMenu()
+  }
+
+  logout(): void {
+    this.authService.logout()
+    this.router.navigate(["/"])
+    this.closeMenu()
   }
 }

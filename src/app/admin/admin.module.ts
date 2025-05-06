@@ -11,7 +11,6 @@ import { CategoriesComponent } from './components/categories/categories.componen
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettignsComponent } from './components/settigns/settigns.component';
 
-
 @NgModule({
   declarations: [
     AdminLayoutComponent,

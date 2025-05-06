@@ -22,6 +22,8 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { LandingComponent } from './components/landing/landing.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +34,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
     AboutUsComponent,
     FooterComponent,
     ThemeToggleComponent,
-    LocationMapComponent
+    LocationMapComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
       })
     ),
     provideFirestore(() => getFirestore()),
-    provideAuth(()=> getAuth() )
+    provideAuth(()=> getAuth() ),
+    provideStorage(() => getStorage() )
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

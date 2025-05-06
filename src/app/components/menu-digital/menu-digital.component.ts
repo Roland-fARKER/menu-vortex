@@ -11,6 +11,11 @@ import { CarritoService } from '../../services/carrito.service';
 import { ProductosService } from '../../services/productos.service';
 import type { Categoria, Producto } from '../../models/producto.model';
 import { CategoriesService } from '../../services/categories.service';
+import { Business } from '../../models/auth.model';
+import { ActivatedRoute } from '@angular/router';
+import { BusinessInfoService } from '../../services/business.info.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-menu-digital',
@@ -44,13 +49,23 @@ export class MenuDigitalComponent implements OnInit {
   categoriaActiva = 'todas';
   carritoAbierto = false;
 
+  business: Business | null = null
+  isLoading = true
+  firestore: any;
+
   constructor(
     private carritoService: CarritoService,
     private productosService: ProductosService,
-    private categoriasService: CategoriesService  
+    private categoriasService: CategoriesService,
+    private route: ActivatedRoute,
+    private businessService: BusinessInfoService
   ) {}
 
   ngOnInit(): void {
+    const slug = this.route.snapshot.paramMap.get('slug')
+
+    
+
     this.productosService.obtenerProductos().subscribe((productos) => {
       this.productos = productos;
     });
@@ -90,4 +105,6 @@ export class MenuDigitalComponent implements OnInit {
     this.carritoAbierto = !this.carritoAbierto;
     console.log('Carrito abierto:', this.carritoAbierto); 
   }
+
+  
 }

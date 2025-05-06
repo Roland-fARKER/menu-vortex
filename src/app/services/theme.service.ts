@@ -14,6 +14,7 @@ export class ThemeService {
   private renderer: Renderer2;
   private themeSubject = new BehaviorSubject<Theme>(this.getInitialTheme());
   theme$ = this.themeSubject.asObservable();
+  darkMode$: any;
 
   constructor(rendererFactory: RendererFactory2) {
     this.renderer = rendererFactory.createRenderer(null, null);
