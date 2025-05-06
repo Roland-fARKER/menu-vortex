@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AuthState, User, Business } from '../../models/auth.model';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
-import { Firestore, doc, docData, setDoc, getDoc } from '@angular/fire/firestore';
+import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from '@angular/fire/auth';
+import { Firestore, doc, docData, setDoc, getDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -100,21 +100,24 @@ export class AuthService {
 
   login(email: string, password: string): Observable<User> {
     this.updateState({ isLoading: true, error: null });
-
+  
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       switchMap((cred) => {
         const userId = cred.user.uid;
         const userRef = doc(this.firestore, `users/${userId}`);
-        const businessQuery = doc(this.firestore, `businesses/business_${userId}`);
-
+        const businessCollection = collection(this.firestore, 'businesses');
+        const q = query(businessCollection, where('ownerId', '==', userId));
+  
         return from(Promise.all([
           getDoc(userRef),
-          getDoc(businessQuery)
+          getDocs(q)
         ])).pipe(
-          tap(([userSnap, businessSnap]) => {
+          tap(([userSnap, businessQuerySnap]) => {
             const user = userSnap.data() as User;
-            const business = businessSnap.exists() ? businessSnap.data() as Business : null;
-
+            const business = !businessQuerySnap.empty
+              ? businessQuerySnap.docs[0].data() as Business
+              : null;
+  
             this.updateState({
               user,
               business,
@@ -166,6 +169,27 @@ export class AuthService {
         this.updateState({ business: updatedBusiness });
       }),
       switchMap(() => of(updatedBusiness))
+    );
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    const currentUser = this.auth.currentUser;
+  
+    if (!currentUser || !currentUser.email) {
+      return throwError(() => new Error("Usuario no autenticado o sin email"));
+    }
+  
+    const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+  
+    return from(reauthenticateWithCredential(currentUser, credential)).pipe(
+      switchMap(() => from(updatePassword(currentUser, newPassword))),
+      tap(() => {
+        console.log("Contraseña actualizada correctamente");
+      }),
+      catchError(err => {
+        console.error("Error al cambiar contraseña:", err);
+        return throwError(() => new Error(err.message));
+      })
     );
   }
 }

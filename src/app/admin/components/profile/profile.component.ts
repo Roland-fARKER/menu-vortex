@@ -160,15 +160,23 @@ export class ProfileComponent {
 
   changePassword(): void {
     if (this.passwordForm.valid) {
-      this.isLoading = true
-      this.clearMessages()
-
-      // Simulación de cambio de contraseña
-      setTimeout(() => {
-        this.isLoading = false
-        this.successMessage = "Contraseña actualizada correctamente"
-        this.passwordForm.reset()
-      }, 1000)
+      this.isLoading = true;
+      this.clearMessages();
+  
+      const currentPassword = this.passwordForm.value.currentPassword;
+      const newPassword = this.passwordForm.value.newPassword;
+  
+      this.authService.changePassword(currentPassword, newPassword).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.successMessage = "Contraseña actualizada correctamente";
+          this.passwordForm.reset();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = `Error al cambiar la contraseña: ${err.message}`;
+        },
+      });
     }
   }
 

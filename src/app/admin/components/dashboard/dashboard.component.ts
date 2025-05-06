@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ProductosService } from '../../../services/productos.service';
+import { CategoriesService } from '../../../services/categories.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,15 +16,21 @@ export class DashboardComponent {
 
   constructor(
     private authService: AuthService,
-    private productosService: ProductosService
+    private productosService: ProductosService,
+    private categoriesService: CategoriesService
   ) {
     this.authService.authState$.subscribe((state) => {
+      console.log('authState', state);
       this.businessName = state.business?.name || '';
     });
 
     this.productosService.obtenerProductos().subscribe((productos) => {
       this.totalProducts = productos.length;
     });
-    this.totalCategories = this.productosService.obtenerCategorias().length;
+
+    this.categoriesService.obtenerCategorias().subscribe((categorias) => {
+      this.totalCategories = categorias.length;
+    });
+
   }
 }
