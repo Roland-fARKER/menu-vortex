@@ -15,10 +15,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component';
 import { LocationMapComponent } from './components/location-map/location-map.component';
 import { FormsModule } from "@angular/forms"
-
 import { environment } from './environments/environment';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';

@@ -104,8 +104,29 @@
       <span>Total:</span>
       <span>C$ {{ total }}</span>
     </div>
-    <button class="pedir-btn" (click)="realizarPedido()">
-      Realizar Pedido
-    </button>
+
+    <p class="nota-delivery">
+      * El delivery tiene un costo adicional según tu ubicación.
+    </p>
+
+    <!-- Botón para abrir el modal -->
+    <button class="pedir-btn" (click)="mostrarModal = true">Realizar Pedido</button>
+  </div>
+</div>
+
+<!-- Modal para ingreso de datos del cliente -->
+<div *ngIf="mostrarModal" class="modal">
+  <div class="modal-content">
+    <h2>Ingrese su nombre y dirección</h2>
+    <form (ngSubmit)="realizarPedido()">
+      <label for="nombreCliente">Nombre:</label>
+      <input id="nombreCliente" [(ngModel)]="nombreCliente" name="nombreCliente" required />
+      
+      <label for="direccionCliente">Dirección:</label>
+      <input id="direccionCliente" [(ngModel)]="direccionCliente" name="direccionCliente" required />
+      
+      <button type="submit">Realizar Pedido</button>
+      <button type="button" (click)="mostrarModal = false">Cancelar</button>
+    </form>
   </div>
 </div>
