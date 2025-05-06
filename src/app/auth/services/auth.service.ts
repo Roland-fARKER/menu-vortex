@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, type Observable, of, throwError } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
-import { User, Business, AuthState } from '../../models/auth.model';
+import { BehaviorSubject, from, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { AuthState, User, Business } from '../../models/auth.model';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from '@angular/fire/auth';
+import { Firestore, doc, docData, setDoc, getDoc } from '@angular/fire/firestore';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private initialState: AuthState = {
     user: null,
@@ -15,22 +15,25 @@ export class AuthService {
     error: null,
   };
 
-  private authStateSubject = new BehaviorSubject<AuthState>(
-    this.getInitialState()
-  );
+  private authStateSubject = new BehaviorSubject<AuthState>(this.getInitialState());
   authState$ = this.authStateSubject.asObservable();
 
-  constructor() {
-    // Verificar si hay una sesión guardada al iniciar
+  constructor(private auth: Auth, private firestore: Firestore) {
     this.checkSavedSession();
   }
 
   private getInitialState(): AuthState {
     const savedState = localStorage.getItem('authState');
-    if (savedState) {
-      return JSON.parse(savedState);
+    return savedState ? JSON.parse(savedState) : this.initialState;
+  }
+
+  private updateState(newState: Partial<AuthState>): void {
+    const currentState = this.authStateSubject.value;
+    const updatedState = { ...currentState, ...newState };
+    this.authStateSubject.next(updatedState);
+    if (!updatedState.isLoading && !updatedState.error) {
+      localStorage.setItem('authState', JSON.stringify(updatedState));
     }
-    return this.initialState;
   }
 
   private checkSavedSession(): void {
@@ -43,161 +46,126 @@ export class AuthService {
     }
   }
 
-  private updateState(newState: Partial<AuthState>): void {
-    const currentState = this.authStateSubject.value;
-    const updatedState = { ...currentState, ...newState };
-    this.authStateSubject.next(updatedState);
-
-    // Guardar en localStorage (excepto durante carga o errores)
-    if (!updatedState.isLoading && !updatedState.error) {
-      localStorage.setItem('authState', JSON.stringify(updatedState));
-    }
+  register(user: User, business: Business): Observable<{ user: User; business: Business }> {
+    this.updateState({ isLoading: true, error: null });
+  
+    return from(
+      createUserWithEmailAndPassword(this.auth, user.email, user.password!)
+    ).pipe(
+      switchMap((userCredential) => {
+        const userId = userCredential.user.uid;
+  
+        // Crear el objeto de usuario sin la contraseña
+        const newUser: User = {
+          ...user,
+          id: userId,
+          createdAt: new Date(),
+        };
+  
+        const { password, ...userToSave } = newUser; // Eliminar password
+  
+        // Crear el negocio vinculado al usuario
+        const newBusiness: Business = {
+          ...business,
+          id: 'business_' + Date.now(),
+          ownerId: userId,
+          createdAt: new Date(),
+        };
+  
+        const userRef = doc(this.firestore, `users/${userId}`);
+        const businessRef = doc(this.firestore, `businesses/${newBusiness.id}`);
+  
+        return from(Promise.all([
+          setDoc(userRef, userToSave),
+          setDoc(businessRef, newBusiness)
+        ])).pipe(
+          tap(() => {
+            this.updateState({
+              user: userToSave as User,
+              business: newBusiness,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+          }),
+          map(() => ({ user: userToSave as User, business: newBusiness }))
+        );
+      }),
+      catchError((error) => {
+        this.updateState({ isLoading: false, error: error.message });
+        return throwError(() => new Error(error.message));
+      })
+    );
   }
+  
 
   login(email: string, password: string): Observable<User> {
     this.updateState({ isLoading: true, error: null });
 
-    const foundUser = this.getMockUsers().find(
-      (u) => u.email === email && u.password === password
-    );
+    return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+      switchMap((cred) => {
+        const userId = cred.user.uid;
+        const userRef = doc(this.firestore, `users/${userId}`);
+        const businessQuery = doc(this.firestore, `businesses/business_${userId}`);
 
-    if (!foundUser) {
-      const error = 'Credenciales incorrectas';
-      this.updateState({ isLoading: false, error });
-      return throwError(() => new Error(error));
-    }
+        return from(Promise.all([
+          getDoc(userRef),
+          getDoc(businessQuery)
+        ])).pipe(
+          tap(([userSnap, businessSnap]) => {
+            const user = userSnap.data() as User;
+            const business = businessSnap.exists() ? businessSnap.data() as Business : null;
 
-    const business = this.getMockBusinesses().find(
-      (b) => b.ownerId === foundUser.id
-    );
-    const { password: _, ...secureUser } = foundUser;
-
-    const user = secureUser as User;
-
-    this.updateState({
-      user,
-      business,
-      isAuthenticated: true,
-      isLoading: false,
-    });
-
-    return of(user).pipe(delay(800));
-  }
-
-  register(
-    user: User,
-    business: Business
-  ): Observable<{ user: User; business: Business }> {
-    this.updateState({ isLoading: true, error: null });
-
-    // Simulación de API - En producción, esto sería una llamada real a un backend
-    return of({ user, business }).pipe(
-      delay(1000), // Simular latencia de red
-      tap((result) => {
-        // Generar IDs simulados
-        const newUser = {
-          ...result.user,
-          id: 'user_' + Date.now(),
-          createdAt: new Date(),
-        };
-
-        const newBusiness = {
-          ...result.business,
-          id: 'business_' + Date.now(),
-          ownerId: newUser.id,
-          createdAt: new Date(),
-        };
-
-        // Eliminar la contraseña antes de almacenar el usuario
-        const { password, ...secureUser } = newUser;
-
-        this.updateState({
-          user: secureUser as User,
-          business: newBusiness,
-          isAuthenticated: true,
-          isLoading: false,
-        });
+            this.updateState({
+              user,
+              business,
+              isAuthenticated: true,
+              isLoading: false
+            });
+          }),
+          switchMap(([userSnap, _]) => of(userSnap.data() as User))
+        );
+      }),
+      catchError(err => {
+        this.updateState({ isLoading: false, error: err.message });
+        return throwError(() => new Error(err.message));
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('authState');
-    this.authStateSubject.next(this.initialState);
+    signOut(this.auth).then(() => {
+      localStorage.removeItem('authState');
+      this.authStateSubject.next(this.initialState);
+    });
   }
 
   updateUserProfile(userData: Partial<User>): Observable<User> {
-    this.updateState({ isLoading: true });
+    const currentUser = this.authStateSubject.value.user;
+    if (!currentUser) return throwError(() => new Error('No user logged in'));
 
-    return of({
-      ...this.authStateSubject.value.user,
-      ...userData,
-    } as User).pipe(
-      delay(500),
-      tap((updatedUser) => {
-        this.updateState({
-          user: updatedUser,
-          isLoading: false,
-        });
-      })
+    const userRef = doc(this.firestore, `users/${currentUser.id}`);
+    const updatedUser = { ...currentUser, ...userData };
+
+    return from(setDoc(userRef, updatedUser, { merge: true })).pipe(
+      tap(() => {
+        this.updateState({ user: updatedUser });
+      }),
+      switchMap(() => of(updatedUser))
     );
   }
 
   updateBusinessProfile(businessData: Partial<Business>): Observable<Business> {
-    this.updateState({ isLoading: true });
+    const currentBusiness = this.authStateSubject.value.business;
+    if (!currentBusiness) return throwError(() => new Error('No business found'));
 
-    return of({
-      ...this.authStateSubject.value.business,
-      ...businessData,
-    } as Business).pipe(
-      delay(500),
-      tap((updatedBusiness) => {
-        this.updateState({
-          business: updatedBusiness,
-          isLoading: false,
-        });
-      })
+    const businessRef = doc(this.firestore, `businesses/${currentBusiness.id}`);
+    const updatedBusiness = { ...currentBusiness, ...businessData };
+
+    return from(setDoc(businessRef, updatedBusiness, { merge: true })).pipe(
+      tap(() => {
+        this.updateState({ business: updatedBusiness });
+      }),
+      switchMap(() => of(updatedBusiness))
     );
-  }
-
-  // Métodos auxiliares para simular una base de datos
-  private getMockUsers(): User[] {
-    return [
-      {
-        id: 'user_1',
-        name: 'Admin Demo',
-        email: 'admin@demo.com',
-        phone: '555-1234',
-        password: 'password123',
-        role: 'owner',
-        createdAt: new Date('2023-01-01'),
-      },
-    ];
-  }
-
-  private getMockBusinesses(): Business[] {
-    return [
-      {
-        id: 'business_1',
-        ownerId: 'user_1',
-        name: 'Restaurante Demo',
-        description: 'El mejor restaurante de la ciudad',
-        logo: 'assets/vortex-logo.png',
-        coverImage: 'assets/placeholder-banner.png',
-        location: {
-          lat: 19.4326,
-          lng: -99.1332,
-          address:
-            'Av. Paseo de la Reforma 222, Juárez, 06600 Ciudad de México, CDMX',
-        },
-        socialMedia: {
-          facebook: 'https://facebook.com/restaurantedemo',
-          instagram: 'https://instagram.com/restaurantedemo',
-          twitter: 'https://twitter.com/restaurantedemo',
-          website: 'https://restaurantedemo.com',
-        },
-        createdAt: new Date('2023-01-01'),
-      },
-    ];
   }
 }
