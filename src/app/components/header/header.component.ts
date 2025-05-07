@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output  } from '@angular/core';
+import { Component, EventEmitter, Input, Output  } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThemeService } from '../../services/theme.service';
@@ -30,6 +30,8 @@ export class HeaderComponent {
   currentTheme: "light" | "dark" = "light"
 
   @Output() toggleCarritoEvent = new EventEmitter<void>()
+  @Input() title: string = ''
+  @Input() logoUrl: string = ''
 
   constructor(
     public carritoService: CarritoService,
@@ -47,33 +49,9 @@ export class HeaderComponent {
     this.themeService.theme$.subscribe((theme) => {
       this.currentTheme = theme
     })
-
-    // Verificar estado de autenticación
-    this.authService.authState$.subscribe((state) => {
-      this.isAuthenticated = state.isAuthenticated
-    })
   }
 
   toggleCarrito(): void {
     this.toggleCarritoEvent.emit()
-  }
-
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen
-  }
-
-  closeMenu(): void {
-    this.isMenuOpen = false
-  }
-
-  navigateTo(route: string): void {
-    this.router.navigate([route])
-    this.closeMenu()
-  }
-
-  logout(): void {
-    this.authService.logout()
-    this.router.navigate(["/"])
-    this.closeMenu()
   }
 }

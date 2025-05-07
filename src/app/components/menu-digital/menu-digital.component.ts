@@ -11,11 +11,12 @@ import { CarritoService } from '../../services/carrito.service';
 import { ProductosService } from '../../services/productos.service';
 import type { Categoria, Producto } from '../../models/producto.model';
 import { CategoriesService } from '../../services/categories.service';
-import { Business } from '../../models/auth.model';
+
 import { ActivatedRoute } from '@angular/router';
 import { BusinessInfoService } from '../../services/business.info.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Business } from '../../models/business.model';
 
 @Component({
   selector: 'app-menu-digital',
@@ -49,9 +50,11 @@ export class MenuDigitalComponent implements OnInit {
   categoriaActiva = 'todas';
   carritoAbierto = false;
 
-  business: Business | null = null
-  isLoading = true
-  firestore: any;
+  business: Business | null = null;
+
+  isLoading = true;
+
+  businessId: string = '';
 
   constructor(
     private carritoService: CarritoService,
@@ -62,21 +65,44 @@ export class MenuDigitalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const slug = this.route.snapshot.paramMap.get('slug')
+    const slug = this.route.snapshot.paramMap.get('slug');
+    console.log('Slug:', slug); // Para depuración
 
-    
+    if (slug) {
+      this.businessService.getBusinessBySlug(slug).subscribe(
+        (business) => {
+          this.business = business;
 
-    this.productosService.obtenerProductos().subscribe((productos) => {
-      this.productos = productos;
-    });
-    
+          if (!this.business) {
+            console.error('Negocio no encontrado');
+            return;
+          }
 
-    this.categoriasService.obtenerCategorias().subscribe((cates) => {
-      this.categorias = cates;
-      console.log(this.categorias); // Para depuración
-      this.actualizarProductosFiltrados();
-    } )
+          console.log('Negocio cargado:', this.business);
+          this.businessId = this.business.id ?? '';
 
+          // ✅ Cargar productos
+          this.productosService
+            .getProductosPorNegocio(this.businessId)
+            .subscribe((prods) => {
+              this.productos = prods;
+              this.productosFiltrados = prods;
+            });
+
+          // ✅ Cargar categorías (DESPUÉS de tener businessId)
+          this.categoriasService
+            .obtenerCategoriasPorNegocio(this.businessId)
+            .subscribe((categori) => {
+              this.categorias = categori;
+              console.log('Categorías:', this.categorias);
+              this.isLoading = false;
+            });
+        },
+        (error) => {
+          console.error('Error al cargar el negocio:', error);
+        }
+      );
+    }
   }
 
   actualizarProductosFiltrados(): void {
@@ -88,13 +114,13 @@ export class MenuDigitalComponent implements OnInit {
   cambiarCategoria(categoriaId: string): void {
     this.categoriaActiva = categoriaId;
 
-  if (categoriaId === 'todas') {
-    this.productosFiltrados = this.productos;
-  } else {
-    this.productosFiltrados = this.productos.filter(
-      (producto) => producto.categoria === categoriaId
-    );
-  }
+    if (categoriaId === 'todas') {
+      this.productosFiltrados = this.productos;
+    } else {
+      this.productosFiltrados = this.productos.filter(
+        (producto) => producto.categoria === categoriaId
+      );
+    }
   }
 
   agregarAlCarrito(producto: Producto): void {
@@ -103,8 +129,6 @@ export class MenuDigitalComponent implements OnInit {
 
   toggleCarrito(): void {
     this.carritoAbierto = !this.carritoAbierto;
-    console.log('Carrito abierto:', this.carritoAbierto); 
+    console.log('Carrito abierto:', this.carritoAbierto);
   }
-
-  
 }

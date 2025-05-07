@@ -5,6 +5,7 @@ export interface Producto {
   imagen: string;
   categoria: string;
   descripcion: string;
+  businessId?: string;
 }
 
 export interface ItemCarrito {
@@ -17,4 +18,5 @@ export interface Categoria {
   nombre: string;
   descripcion?: string;
   icono?: string;
+  businessId?: string;
 }

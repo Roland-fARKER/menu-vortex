@@ -4,14 +4,27 @@ import { MenuDigitalComponent } from './components/menu-digital/menu-digital.com
 import { LandingComponent } from './components/landing/landing.component';
 
 const routes: Routes = [
-  {path: '', component: LandingComponent},
-  { path:'auth', loadChildren:()=> import('./auth/auth.module').then(m => m.AuthModule) },
-  {path: 'admin', loadChildren:()=> import('./admin/admin.module').then(m => m.AdminModule) },
-  // Ruta dinámica para negocios
-  { path: ':slug', component: MenuDigitalComponent },
+  { path: '', component: LandingComponent },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+  },
+
+  {
+    path: ':slug',
+    children: [
+      { path: '', component: MenuDigitalComponent },
+      {
+        path: 'admin',
+        loadChildren: () =>
+          import('./admin/admin.module').then((m) => m.AdminModule),
+      },
+    ],
+  },
 ];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { User, Business } from '../../../models/auth.model';
+import { User } from '../../../models/auth.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
+import { Business } from '../../../models/business.model';
 @Component({
   selector: 'app-register',
   standalone: false,

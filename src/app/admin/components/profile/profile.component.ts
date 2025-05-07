@@ -1,10 +1,11 @@
 import { Component, type OnInit, ViewChild, type ElementRef } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormBuilder, type FormGroup, ReactiveFormsModule, Validators } from "@angular/forms"
-import type { Business, User } from "../../../models/auth.model"
+
 import { AuthService } from "../../../auth/services/auth.service"
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
-
+import { Business } from "../../../models/business.model";
+import { User } from "../../../models/auth.model";
 @Component({
   selector: "app-profile",
   standalone: false,

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AuthState, User, Business } from '../../models/auth.model';
+import { AuthState, User} from '../../models/auth.model';
 import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword } from '@angular/fire/auth';
-import { Firestore, doc, docData, setDoc, getDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, doc, docData, setDoc, getDoc, collection, query, where, getDocs, Timestamp } from '@angular/fire/firestore';
+import { Business } from '../../models/business.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -69,7 +70,7 @@ export class AuthService {
           ...business,
           id: 'business_' + Date.now(),
           ownerId: userId,
-          createdAt: new Date(),
+          createdAt:  Timestamp.now(),
         };
   
         const userRef = doc(this.firestore, `users/${userId}`);

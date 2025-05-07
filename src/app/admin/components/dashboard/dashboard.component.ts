@@ -13,7 +13,9 @@ export class DashboardComponent {
   businessName = '';
   totalProducts = 0;
   totalCategories = 0;
+  businessId = '';
 
+  slugStr = '';
   constructor(
     private authService: AuthService,
     private productosService: ProductosService,
@@ -22,15 +24,18 @@ export class DashboardComponent {
     this.authService.authState$.subscribe((state) => {
       console.log('authState', state);
       this.businessName = state.business?.name || '';
+      this.businessId = state.business?.id || '';
+      this.slugStr = state.business?.slug || '';
     });
 
-    this.productosService.obtenerProductos().subscribe((productos) => {
-      this.totalProducts = productos.length;
-    });
+    this.productosService
+      .getProductosPorNegocio(this.businessId)
+      .subscribe((productos) => {
+        this.totalProducts = productos.length;
+      });
 
-    this.categoriesService.obtenerCategorias().subscribe((categorias) => {
+    this.categoriesService.obtenerCategoriasPorNegocio(this.businessId).subscribe((categorias) => {
       this.totalCategories = categorias.length;
     });
-
   }
 }

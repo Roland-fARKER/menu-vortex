@@ -8,6 +8,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  where,
 } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -22,6 +24,12 @@ export class CategoriesService {
   obtenerCategorias(): Observable<Categoria[]> {
     const productosRef = collection(this.firestore, this.collectionName);
     return collectionData(productosRef, { idField: 'id' }) as Observable<Categoria[]>;
+  }
+
+  obtenerCategoriasPorNegocio(businessId: string): Observable<Categoria[]> {
+    const categoriasRef = collection(this.firestore, this.collectionName);
+    const q = query(categoriasRef, where('businessId', '==', businessId));
+    return collectionData(q, { idField: 'id' }) as Observable<Categoria[]>;
   }
 
   crearCategoria(cat: Categoria): Promise<any> {

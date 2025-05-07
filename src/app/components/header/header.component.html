@@ -2,20 +2,10 @@
   <div class="container">
     <div class="logo">
       <a routerLink="/">
-        <img src="assets/vortex-logo.png" alt="Logo del restaurante">
-        <h1>VORTEX</h1>
+        <img [src]="logoUrl" alt="Logo del restaurante">
+        <h1>{{title}}</h1>
       </a>
     </div>
-
-    <!-- Navegación para pantallas grandes -->
-    <nav class="desktop-nav">
-      <ul>
-        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a></li>
-        <li><a routerLink="/menu" routerLinkActive="active">Menú</a></li>
-        <li><a routerLink="/about" routerLinkActive="active">Nosotros</a></li>
-        <li><a routerLink="/contact" routerLinkActive="active">Contacto</a></li>
-      </ul>
-    </nav>
 
     <div class="header-actions">
       <app-theme-toggle></app-theme-toggle>
@@ -33,54 +23,6 @@
         </div>
       </button>
 
-      <!-- Botones de autenticación para pantallas grandes -->
-      <div class="auth-buttons desktop-only">
-        <ng-container *ngIf="!isAuthenticated; else userMenu">
-          <button class="login-btn" (click)="navigateTo('/login')">Iniciar sesión</button>
-          <button class="register-btn" (click)="navigateTo('/register')">Registrarse</button>
-        </ng-container>
-        <ng-template #userMenu>
-          <button class="admin-btn" (click)="navigateTo('/admin/dashboard')">Panel Admin</button>
-        </ng-template>
-      </div>
-
-      <!-- Botón de menú hamburguesa para móviles -->
-      <button class="menu-toggle" (click)="toggleMenu()">
-        <svg *ngIf="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-        <svg *ngIf="isMenuOpen" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
     </div>
   </div>
-
-  <!-- Menú móvil -->
-  <div class="mobile-menu" [class.open]="isMenuOpen" [ngClass]="currentTheme + '-theme'">
-    <nav>
-      <ul>
-        <li><a routerLink="/" (click)="closeMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a></li>
-        <li><a routerLink="/menu" (click)="closeMenu()" routerLinkActive="active">Menú</a></li>
-        <li><a routerLink="/about" (click)="closeMenu()" routerLinkActive="active">Nosotros</a></li>
-        <li><a routerLink="/contact" (click)="closeMenu()" routerLinkActive="active">Contacto</a></li>
-        
-        <!-- Botones de autenticación para móviles -->
-        <ng-container *ngIf="!isAuthenticated; else mobileUserMenu">
-          <li class="auth-item"><a routerLink="/login" (click)="closeMenu()">Iniciar sesión</a></li>
-          <li class="auth-item"><a routerLink="/register" (click)="closeMenu()">Registrarse</a></li>
-        </ng-container>
-        <ng-template #mobileUserMenu>
-          <li class="auth-item"><a routerLink="/admin/dashboard" (click)="closeMenu()">Panel Admin</a></li>
-          <li class="auth-item"><a (click)="logout()">Cerrar sesión</a></li>
-        </ng-template>
-      </ul>
-    </nav>
-  </div>
-
-  <!-- Overlay para cerrar el menú móvil -->
-  <div class="menu-overlay" *ngIf="isMenuOpen" (click)="closeMenu()"></div>
 </header>

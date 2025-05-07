@@ -69,7 +69,7 @@
       <ul>
         <li>
           <a
-            routerLink="/admin/dashboard"
+            [routerLink]="['/', slug, 'admin', 'dashboard']"
             routerLinkActive="active"
             (click)="closeMobileMenuIfNeeded()"
           >
@@ -94,7 +94,7 @@
         </li>
         <li>
           <a
-            routerLink="/admin/products"
+            [routerLink]="['/', slug, 'admin', 'products']"
             routerLinkActive="active"
             (click)="closeMobileMenuIfNeeded()"
           >
@@ -120,7 +120,7 @@
         </li>
         <li>
           <a
-            routerLink="/admin/categories"
+            [routerLink]="['/', slug, 'admin', 'categories']"
             routerLinkActive="active"
             (click)="closeMobileMenuIfNeeded()"
           >
@@ -147,7 +147,7 @@
         </li>
         <li>
           <a
-            routerLink="/admin/profile"
+            [routerLink]="['/', slug, 'admin', 'profile']"
             routerLinkActive="active"
             (click)="closeMobileMenuIfNeeded()"
           >
@@ -170,7 +170,7 @@
         </li>
         <li>
           <a
-            routerLink="/admin/settings"
+            [routerLink]="['/', slug, 'admin', 'settings']"
             routerLinkActive="active"
             (click)="closeMobileMenuIfNeeded()"
           >

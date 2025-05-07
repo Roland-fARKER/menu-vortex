@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject } from '@angular/core';
 import {
   Firestore,
   collection,
@@ -7,40 +7,37 @@ import {
   updateDoc,
   deleteDoc,
   doc,
-} from "@angular/fire/firestore";
-import { BehaviorSubject, Observable } from "rxjs";
-import type { Categoria, Producto } from "../models/producto.model";
+  query,
+  where,
+} from '@angular/fire/firestore';
+import { BehaviorSubject, Observable } from 'rxjs';
+import type { Producto } from '../models/producto.model';
+import { BusinessInfoService } from './business.info.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ProductosService {
-  private firestore = inject(Firestore);
-  private collectionName = "productos";
+  private collectionName = 'productos';
 
-  private categoriaActivaSubject = new BehaviorSubject<string>("todas");
+  private categoriaActivaSubject = new BehaviorSubject<string>('todas');
   categoriaActiva$ = this.categoriaActivaSubject.asObservable();
 
-  private categorias: Categoria[] = [
-    { id: "todos", nombre: "Todo" },
-    { id: "hamburguesas", nombre: "Hamburguesas" },
-    { id: "pizzas", nombre: "Pizzas" },
-    { id: "tacos", nombre: "Tacos" },
-    { id: "ensaladas", nombre: "Ensaladas" },
-    { id: "sushi", nombre: "Sushi" },
-    { id: "pastas", nombre: "Pastas" },
-    { id: "burritos", nombre: "Burritos" },
-  ];
+  constructor(
+    private firestore: Firestore,
+  ) {}
 
-  constructor() {}
+  getProductosPorNegocio(businessId: string): Observable<Producto[]> {
+    const productosRef = collection(this.firestore, 'productos');
+    const q = query(productosRef, where('businessId', '==', businessId));
+    return collectionData(q, { idField: 'id' }) as Observable<Producto[]>;
+  }
 
   obtenerProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, this.collectionName);
-    return collectionData(productosRef, { idField: "id" }) as Observable<Producto[]>;
-  }
-
-  obtenerCategorias(): Categoria[] {
-    return this.categorias;
+    return collectionData(productosRef, { idField: 'id' }) as Observable<
+      Producto[]
+    >;
   }
 
   cambiarCategoria(categoria: string): void {

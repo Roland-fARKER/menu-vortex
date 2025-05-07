@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core"
-import { BehaviorSubject } from "rxjs"
+import { BehaviorSubject, map, Observable } from "rxjs"
 import { SocialMedia, MapLocation } from "../models/social-media"
-import { Firestore, collection, query, where, getDocs } from "@angular/fire/firestore"
-import { Business } from "../models/auth.model"
+import { Firestore, collection, query, where, getDocs, collectionData } from "@angular/fire/firestore"
+import { Business } from "../models/business.model"
+
 
 @Injectable({
   providedIn: "root",
@@ -17,6 +18,9 @@ export class BusinessInfoService {
     title: "VORTEX - Oficina Central",
     address: "Av. Paseo de la Reforma 222, Juárez, 06600 Ciudad de México, CDMX",
   }
+
+  private businessSubject = new BehaviorSubject<Business | null>(null);
+  business$ = this.businessSubject.asObservable();
 
   // BehaviorSubjects para las redes sociales y la ubicación
   private socialMediaSubject = new BehaviorSubject<SocialMedia[]>(this.getSocialMedia())
@@ -34,11 +38,23 @@ export class BusinessInfoService {
     return saved ? JSON.parse(saved) : this.initialLocation
   }
 
-  // Métodos para gestionar redes sociales
-  getSocialMedia(): SocialMedia[] {
-    return this.socialMediaSubject.value
+  getBusinessBySlug(slug: string): Observable<Business | null> {
+    const negociosRef = collection(this.firestore, 'businesses');
+    const q = query(negociosRef, where('slug', '==', slug));
+    return collectionData(q, { idField: 'id' }).pipe(
+      map(negocios => negocios.map(negocio => negocio as Business)[0] ?? null)
+    );
   }
 
+  getSocialMedia(): SocialMedia[] {
+    const saved = localStorage.getItem("socialMedia");
+    return saved ? JSON.parse(saved) : [];
+  }
+
+  setBusiness(business: Business) {
+    this.businessSubject.next(business);
+  }
+  
   addSocialMedia(socialMedia: SocialMedia): void {
     const current = this.socialMediaSubject.value
     const updated = [...current, socialMedia]
@@ -72,16 +88,4 @@ export class BusinessInfoService {
     localStorage.setItem("mapLocation", JSON.stringify(updated))
   }
 
-  async getBusinessBySlug(slug: string): Promise<Business | null> {
-    const businessesRef = collection(this.firestore, 'businesses')
-    const q = query(businessesRef, where('slug', '==', slug))
-    const snapshot = await getDocs(q)
-
-    if (!snapshot.empty) {
-      return snapshot.docs[0].data() as Business
-    }
-
-    return null
-  }
-  // Removed unused method
 }
