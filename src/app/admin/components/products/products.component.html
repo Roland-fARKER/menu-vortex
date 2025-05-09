@@ -56,9 +56,13 @@
 
   <!-- Productos en formato de tarjetas -->
   <div class="products-grid">
-    <div class="product-card" *ngFor="let producto of productosFiltrados">
+    <!-- Asegúrate de añadir la clase 'unavailable' a la tarjeta cuando el producto no está disponible -->
+    <div class="product-card" *ngFor="let producto of productosFiltrados" [ngClass]="{'unavailable': !producto.disponible}">
       <div class="product-image">
         <img [src]="producto.imagen" [alt]="producto.nombre" />
+        <span class="availability-badge" [ngClass]="{'available': producto.disponible, 'unavailable': !producto.disponible}">
+          {{ producto.disponible ? 'Disponible' : 'No disponible' }}
+        </span>
       </div>
       <div class="product-content">
         <h3>{{ producto.nombre }}</h3>
@@ -294,6 +298,14 @@
           <p class="help-text">
             Haz clic en el área para seleccionar una imagen. Recomendamos imágenes cuadradas de al menos 300x300 píxeles.
           </p>
+        </div>
+
+        <div class="form-group checkbox-container">
+          <label class="custom-checkbox">
+            <input type="checkbox" formControlName="disponible" />
+            <span class="checkmark"></span>
+            <span class="checkbox-label">Disponible para la venta</span>
+          </label>
         </div>
 
         <div class="form-actions">

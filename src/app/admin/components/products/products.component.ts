@@ -54,6 +54,7 @@ export class ProductsComponent implements OnInit {
       descripcion: ['', [Validators.required]],
       categoria: ['', [Validators.required]],
       imagen: [''],
+      disponible: [true]
     });
 
     this.authService.authState$.subscribe((state) => {
@@ -101,6 +102,7 @@ export class ProductsComponent implements OnInit {
         descripcion: producto.descripcion,
         categoria: producto.categoria,
         imagen: producto.imagen,
+        disponible: producto.disponible,
       });
 
       // Establecer la previsualización de la imagen si existe

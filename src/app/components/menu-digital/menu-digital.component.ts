@@ -94,7 +94,7 @@ longitud: number | null = null;
 
           // ✅ Cargar productos
           this.productosService
-            .getProductosPorNegocio(this.businessId)
+            .getProductsAvailable(this.businessId)
             .subscribe((prods) => {
               this.productos = prods;
               this.productosFiltrados = prods;

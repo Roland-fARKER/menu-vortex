@@ -33,6 +33,16 @@ export class ProductosService {
     return collectionData(q, { idField: 'id' }) as Observable<Producto[]>;
   }
 
+  getProductsAvailable(businessId: string): Observable<Producto[]> {
+  const productosRef = collection(this.firestore, this.collectionName);
+  const q = query(
+    productosRef,
+    where('businessId', '==', businessId),
+    where('disponible', '==', true)
+  );
+  return collectionData(q, { idField: 'id' }) as Observable<Producto[]>;
+}
+
   obtenerProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, this.collectionName);
     return collectionData(productosRef, { idField: 'id' }) as Observable<

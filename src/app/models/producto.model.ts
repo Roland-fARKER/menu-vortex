@@ -6,6 +6,7 @@ export interface Producto {
   categoria: string;
   descripcion: string;
   businessId?: string;
+  disponible: boolean;
 }
 
 export interface ItemCarrito {
