@@ -10,6 +10,8 @@ import {
 } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 import { ItemCarrito, Producto } from '../models/producto.model';
+import { Business } from '../models/business.model';
+import { BusinessInfoService } from './business.info.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +25,7 @@ export class CarritoService {
 
   private collectionRef: CollectionReference;
 
-  constructor(private firestore: Firestore) {
+  constructor(private firestore: Firestore, private businessIn: BusinessInfoService) {
     this.collectionRef = collection(
       this.firestore,
       'carritos'
@@ -94,11 +96,10 @@ export class CarritoService {
   }
 
   obtenerTotal(): number {
-    return this.carritoSubject.value.reduce(
-      (total, item) => total + item.producto.precio * item.cantidad,
-      0
-    );
-  }
+    return this.carritoSubject.value.reduce((acc, item) => {
+      return acc + item.producto.precio * item.cantidad;
+    }, 0);
+  }  
 
   obtenerCantidadItems(): number {
     return this.carritoSubject.value.reduce(
@@ -139,34 +140,60 @@ export class CarritoService {
     );
   }
 
-  enviarPedidoPorWhatsApp(
-    nombreCliente: string,
-    direccionCliente: string
-  ): void {
-    const numero = '50557337508';
+  async enviarPedidoPorWhatsApp(nombreCliente: string, direccionCliente: string): Promise<void> {
     const carrito = this.carritoSubject.value;
-
+  
     if (carrito.length === 0) {
       console.warn('El carrito está vacío');
       return;
     }
-
+  
+    const idBusiness = carrito[0]?.producto.businessId;
+    if (!idBusiness) {
+      console.error('No se encontró el ID del negocio en el carrito');
+      return;
+    }
+  
+    const numero = await this.businessIn.getWhatsappByBusinessId(idBusiness);
+    if (!numero) {
+      console.error('No se encontró el número de WhatsApp del negocio');
+      return;
+    }
+  
     let mensaje = `Hola, deseo realizar el siguiente pedido:%0A`;
     mensaje += `👤 *Nombre:* ${nombreCliente}%0A`;
     mensaje += `🏠 *Dirección:* ${direccionCliente}%0A%0A`;
-
+  
     carrito.forEach((item) => {
-      mensaje += `• ${item.producto.nombre} x${item.cantidad} - C$${
-        item.producto.precio * item.cantidad
-      }%0A`;
+      mensaje += `• ${item.producto.nombre} x${item.cantidad} - C$${item.producto.precio * item.cantidad}%0A`;
     });
-
-    const total = this.obtenerTotal();
+  
+    const total = carrito.reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0);
     mensaje += `%0A💰 *Total:* C$${total}`;
+
     mensaje += `%0A🚚 *Nota:* El delivery tiene un costo adicional según su ubicación.`;
-
-    const url = `https://api.whatsapp.com/send/?phone=${numero}&text=${mensaje}&type=phone_number&app_absent=0`;
-
+  
+    const url = `https://api.whatsapp.com/send/?phone=505${numero}&text=${mensaje}&type=phone_number&app_absent=0`;
+  
     window.open(url, '_blank');
+  }
+  
+
+  async getWhatsappByBusinessId(businessId: string): Promise<string | null> {
+    try {
+      const docRef = doc(this.firestore, `businesses/${businessId}`);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const businessData = docSnap.data() as Business;
+        return businessData.whatsapp || null;
+      } else {
+        console.warn(`No se encontró el negocio con ID: ${businessId}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener el número de WhatsApp:", error);
+      return null;
+    }
   }
 }

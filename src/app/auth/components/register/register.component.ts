@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../../services/theme.service';
 import { Business } from '../../../models/business.model';
+
 @Component({
   selector: 'app-register',
   standalone: false,
@@ -25,6 +26,8 @@ export class RegisterComponent {
   showPassword = false;
   showConfirmPassword = false;
 
+  slug :string = '';
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -38,7 +41,7 @@ export class RegisterComponent {
         email: ['', [Validators.required, Validators.email]],
         phone: [
           '',
-          [Validators.required, Validators.pattern(/^\+?[0-9\s\-$$$$]+$/)],
+          [Validators.required, Validators.pattern(/^\+?[0-9\s\-]+$/)],
         ],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', [Validators.required]],
@@ -50,6 +53,7 @@ export class RegisterComponent {
     this.businessForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
+      whatsapp: [''],
       socialMedia: this.fb.group({
         facebook: [''],
         instagram: [''],
@@ -65,11 +69,11 @@ export class RegisterComponent {
   }
 
   ngOnInit(): void {
-    // Aplicar el tema actual al body para que afecte a este componente
+    // Aplicar el tema actual al body
     this.themeService.theme$.subscribe((theme) => {
-      document.body.classList.remove("light-theme", "dark-theme")
-      document.body.classList.add(`${theme}-theme`)
-    })
+      document.body.classList.remove('light-theme', 'dark-theme');
+      document.body.classList.add(`${theme}-theme`);
+    });
 
     // Verificar si el usuario ya está autenticado
     this.authService.authState$.subscribe((state) => {
@@ -110,6 +114,10 @@ export class RegisterComponent {
     if (this.ownerForm.valid && this.businessForm.valid) {
       this.isLoading = true;
 
+      // Crear slug a partir del nombre del negocio
+      const slug = this.generateSlug(this.businessForm.value.name);
+      this.slug = slug; // Guardar el slug en la variable de clase
+
       // Crear objetos de usuario y negocio
       const user: User = {
         name: this.ownerForm.value.name,
@@ -125,12 +133,14 @@ export class RegisterComponent {
         description: this.businessForm.value.description,
         location: this.businessForm.value.location,
         socialMedia: this.businessForm.value.socialMedia,
+        whatsapp: this.businessForm.value.whatsapp,
+        slug: slug, // aquí se agrega el slug generado
       };
 
       // Registrar usuario y negocio
       this.authService.register(user, business).subscribe({
         next: () => {
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate([`/${this.slug}/admin`]);
         },
         error: (err) => {
           this.isLoading = false;
@@ -163,5 +173,15 @@ export class RegisterComponent {
         this.markFormGroupTouched(control);
       }
     });
+  }
+
+  // Generador de slug desde el nombre del negocio
+  private generateSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '') // elimina caracteres no válidos
+      .replace(/\s+/g, '-')         // reemplaza espacios por guiones
+      .replace(/-+/g, '-');         // evita múltiples guiones seguidos
   }
 }

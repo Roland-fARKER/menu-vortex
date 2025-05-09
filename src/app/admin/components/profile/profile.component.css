@@ -14,6 +14,7 @@
 
 .profile-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 30px;
   overflow-x: auto;
@@ -313,7 +314,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .profile-tabs {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow-x: auto;
   }
 

@@ -15,7 +15,7 @@ export class LoginComponent {
   isLoading = false;
   errorMessage: string | null = null;
   showPassword = false;
-
+  slug: string | null = null; // Para el slug de la empresa
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -33,9 +33,11 @@ export class LoginComponent {
       this.isLoading = state.isLoading;
       this.errorMessage = state.error;
 
+      this.slug = state.business?.slug || null; // Obtener el slug de la empresa
+
       // Redirigir si ya está autenticado
       if (state.isAuthenticated) {
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate([`/${this.slug}/admin`]);
       }
     });
   }

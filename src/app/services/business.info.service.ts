@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core"
 import { BehaviorSubject, map, Observable } from "rxjs"
 import { SocialMedia, MapLocation } from "../models/social-media"
-import { Firestore, collection, query, where, getDocs, collectionData } from "@angular/fire/firestore"
+import { Firestore, collection, query, where, getDocs, collectionData, doc, getDoc } from "@angular/fire/firestore"
 import { Business } from "../models/business.model"
 
 
@@ -9,6 +9,23 @@ import { Business } from "../models/business.model"
   providedIn: "root",
 })
 export class BusinessInfoService {
+  async getWhatsappByBusinessId(businessId: string): Promise<string | null> {
+    try {
+      const docRef = doc(this.firestore, `businesses/${businessId}`);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const businessData = docSnap.data() as Business;
+        return businessData.whatsapp || null;
+      } else {
+        console.warn(`No se encontró el negocio con ID: ${businessId}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener el número de WhatsApp:", error);
+      return null;
+    }
+  }
   
   // Ubicación inicial del mapa
   private initialLocation: MapLocation = {

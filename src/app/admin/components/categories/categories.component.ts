@@ -5,6 +5,17 @@ import { ProductosService } from '../../../services/productos.service';
 import { map } from 'rxjs';
 import { CategoriesService } from '../../../services/categories.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import {
+  CupSoda,
+  Beef,
+  Fish,
+  Hamburger,
+  Beer,
+  Pizza,
+  IceCreamCone,
+  Tag,
+} from 'lucide-angular';
+
 @Component({
   selector: 'app-categories',
   standalone: false,
@@ -40,16 +51,20 @@ export class CategoriesComponent {
   }
 
   ngOnInit(): void {
-    this.categoriasService.obtenerCategoriasPorNegocio(this.businessId).subscribe((categorias) => {
-      this.categorias = categorias;
+    this.categoriasService
+      .obtenerCategoriasPorNegocio(this.businessId)
+      .subscribe((categorias) => {
+        this.categorias = categorias;
 
-      this.productosService.obtenerProductos().subscribe((productos) => {
-        for (const cat of categorias) {
-          const count = productos.filter((p) => p.categoria === cat.id).length;
-          this.productCountMap.set(cat.id || '', count);
-        }
+        this.productosService.obtenerProductos().subscribe((productos) => {
+          for (const cat of categorias) {
+            const count = productos.filter(
+              (p) => p.categoria === cat.id
+            ).length;
+            this.productCountMap.set(cat.id || '', count);
+          }
+        });
       });
-    });
   }
 
   get categoriasFiltradas(): Categoria[] {
@@ -93,17 +108,17 @@ export class CategoriesComponent {
   onSubmit(): void {
     if (this.categoriaForm.valid) {
       const categoriaData = this.categoriaForm.value;
-  
+
       // Asegurar que el businessId esté disponible
-      const businessId = this.businessId ;
+      const businessId = this.businessId;
       if (!businessId) {
         console.error('No se encontró el ID del negocio');
         return;
       }
-  
+
       // Agregar businessId al objeto de categoría
       categoriaData.businessId = businessId;
-  
+
       if (this.isEditing && this.currentCategoryId !== null) {
         this.categoriasService
           .actualizarCategoria(this.currentCategoryId, categoriaData)
@@ -113,14 +128,15 @@ export class CategoriesComponent {
       } else {
         this.categoriasService.crearCategoria(categoriaData).then(() => {
           this.closeForm();
-          this.categoriasService.obtenerCategoriasPorNegocio(businessId).subscribe((categorias) => {
-            this.categorias = categorias;
-          });
+          this.categoriasService
+            .obtenerCategoriasPorNegocio(businessId)
+            .subscribe((categorias) => {
+              this.categorias = categorias;
+            });
         });
       }
     }
   }
-  
 
   deleteCategoria(id: string): void {
     const productosEnCategoria = this.productosService
@@ -143,28 +159,6 @@ export class CategoriesComponent {
         this.categoriasService.eliminarCategoria(id);
       }
     });
-  }
-
-  // Método para obtener el icono de la categoría
-  getCategoryIcon(icono?: string): string {
-    if (!icono) {
-      return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
-    }
-
-    // Aquí podrías tener una lógica para mapear nombres de iconos a SVGs
-    // Por simplicidad, devolvemos algunos iconos predefinidos
-    switch (icono) {
-      case 'hamburguesa':
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>`;
-      case 'pizza':
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`;
-      case 'bebida':
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l2 8.5c1 3 1 6.5 0 9.5L16 22H8l-2-2c-1-3-1-6.5 0-9.5L8 2Z"></path><path d="M8 2l-2 8.5c-1 3-1 6.5 0 9.5l2 2"></path><path d="M16 2l2 8.5c1 3 1 6.5 0 9.5l-2 2"></path></svg>`;
-      case 'postre':
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`;
-      default:
-        return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
-    }
   }
 
   // Método para obtener la cantidad de productos por categoría

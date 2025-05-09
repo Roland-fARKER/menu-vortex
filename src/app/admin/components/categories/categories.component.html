@@ -42,12 +42,11 @@
     />
   </div>
 
+  <lucide-icon name="Piza"></lucide-icon>
+
   <div class="categories-grid">
     <div class="category-card" *ngFor="let categoria of categoriasFiltradas">
-      <div
-        class="category-icon"
-        [innerHTML]="getCategoryIcon(categoria.icono)"
-      ></div>
+      <lucide-icon [name]="categoria.icono || 'Tag'" class="category-icon"></lucide-icon>
       <div class="category-content">
         <h3>{{ categoria.nombre }}</h3>
         <p *ngIf="categoria.descripcion">{{ categoria.descripcion }}</p>
@@ -196,11 +195,14 @@
         <div class="form-group">
           <label for="icono">Icono (opcional)</label>
           <select id="icono" formControlName="icono">
-            <option value="">Sin icono</option>
-            <option value="hamburguesa">Hamburguesa</option>
-            <option value="pizza">Pizza</option>
-            <option value="bebida">Bebida</option>
+            <option value="Tag">Sin icono</option>
+            <option value="Fish">Mariscos</option>
+            <option value="Hamburger">Hamburguesa</option>
+            <option value="Pizza">Pizza</option>
+            <option value="CupSoda">Bebida</option>
             <option value="postre">Postre</option>
+            <option value="Beef">Plato Fuerte</option>
+            <option value="Beer">Cervezas</option>
           </select>
           <p class="help-text">
             Selecciona un icono para representar esta categoría.

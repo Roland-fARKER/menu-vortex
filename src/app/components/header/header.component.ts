@@ -32,6 +32,7 @@ export class HeaderComponent {
   @Output() toggleCarritoEvent = new EventEmitter<void>()
   @Input() title: string = ''
   @Input() logoUrl: string = ''
+  @Input() whatsapp: string = ''
 
   constructor(
     public carritoService: CarritoService,

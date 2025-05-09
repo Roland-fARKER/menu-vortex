@@ -251,6 +251,16 @@
           ></textarea>
         </div>
 
+        <div class="form-group">
+          <label for="whatsapp">whatsapp</label>
+          <input
+            type="text"
+            id="whatsapp"
+            formControlName="whatsapp"
+            placeholder="ejemplo =  23232323 sin prefijo"
+          />
+        </div>
+
         <div formGroupName="socialMedia" class="form-section">
           <h3>Redes Sociales</h3>
 
@@ -378,44 +388,110 @@
         <div class="images-container">
           <div class="image-section">
             <h3>Logo del Negocio</h3>
-            <p class="help-text">Este logo se mostrará en la cabecera de tu menú digital y en otros lugares importantes.</p>
-            
+            <p class="help-text">
+              Este logo se mostrará en la cabecera de tu menú digital y en otros
+              lugares importantes.
+            </p>
+
             <div class="image-upload-container">
               <div class="image-preview logo-preview" (click)="onLogoClick()">
-                <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo del negocio">
+                <img
+                  *ngIf="logoPreview"
+                  [src]="logoPreview"
+                  alt="Logo del negocio"
+                />
                 <div *ngIf="!logoPreview" class="placeholder">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="3"
+                      y="3"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
                     <polyline points="21 15 16 10 5 21"></polyline>
                   </svg>
                   <span>Haz clic para subir logo</span>
                 </div>
               </div>
-              <input #logoInput type="file" accept="image/*" (change)="onLogoChange($event)" style="display: none">
+              <input
+                #logoInput
+                type="file"
+                accept="image/*"
+                (change)="onLogoChange($event)"
+                style="display: none"
+              />
             </div>
-            <p class="help-text">Recomendamos una imagen cuadrada de al menos 200x200 píxeles.</p>
+            <p class="help-text">
+              Recomendamos una imagen cuadrada de al menos 200x200 píxeles.
+            </p>
           </div>
 
           <div class="image-section">
             <h3>Banner del Negocio</h3>
-            <p class="help-text">Este banner se mostrará en la parte superior de tu menú digital.</p>
-            
+            <p class="help-text">
+              Este banner se mostrará en la parte superior de tu menú digital.
+            </p>
+
             <div class="image-upload-container">
-              <div class="image-preview banner-preview" (click)="onBannerClick()">
-                <img *ngIf="bannerPreview" [src]="bannerPreview" alt="Banner del negocio">
+              <div
+                class="image-preview banner-preview"
+                (click)="onBannerClick()"
+              >
+                <img
+                  *ngIf="bannerPreview"
+                  [src]="bannerPreview"
+                  alt="Banner del negocio"
+                />
                 <div *ngIf="!bannerPreview" class="placeholder">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <rect
+                      x="3"
+                      y="3"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
                     <polyline points="21 15 16 10 5 21"></polyline>
                   </svg>
                   <span>Haz clic para subir banner</span>
                 </div>
               </div>
-              <input #bannerInput type="file" accept="image/*" (change)="onBannerChange($event)" style="display: none">
+              <input
+                #bannerInput
+                type="file"
+                accept="image/*"
+                (change)="onBannerChange($event)"
+                style="display: none"
+              />
             </div>
-            <p class="help-text">Recomendamos una imagen rectangular de al menos 1200x400 píxeles.</p>
+            <p class="help-text">
+              Recomendamos una imagen rectangular de al menos 1200x400 píxeles.
+            </p>
           </div>
         </div>
 
@@ -429,11 +505,7 @@
         </div>
 
         <div class="form-actions">
-          <button
-            type="submit"
-            class="save-btn"
-            [disabled]="isLoading"
-          >
+          <button type="submit" class="save-btn" [disabled]="isLoading">
             <span *ngIf="!isLoading">Guardar Cambios</span>
             <div *ngIf="isLoading" class="spinner"></div>
           </button>

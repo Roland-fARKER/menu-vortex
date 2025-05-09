@@ -1,0 +1,27 @@
+<div class="menu-link-widget" [ngClass]="currentTheme + '-theme'">
+  <div class="widget-header">
+    <h3>Enlace a tu Menú Digital</h3>
+    <p class="subtitle">Comparte este enlace con tus clientes</p>
+  </div>
+
+  <div class="widget-body">
+    <div class="link-display">
+      <input type="text" [value]="menuLink" readonly class="link-input" />
+      <button
+        class="copy-button"
+        (click)="copyToClipboard()"
+        [class.copied]="copied"
+      >
+        <span *ngIf="!copied">Copiar</span>
+        <span *ngIf="copied">¡Copiado!</span>
+      </button>
+    </div>
+
+    <div class="notification" *ngIf="copied" [@fadeInOut]>
+      <div class="notification-content">
+        <span class="check-icon">✓</span>
+        Enlace copiado al portapapeles
+      </div>
+    </div>
+  </div>
+</div>

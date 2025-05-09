@@ -13,13 +13,32 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component';
 import { LocationMapComponent } from './components/location-map/location-map.component';
-import { FormsModule } from "@angular/forms"
+import { FormsModule } from '@angular/forms';
 import { environment } from './environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { LandingComponent } from './components/landing/landing.component';
+
+import {
+  LucideAngularModule,
+  CupSoda,
+  Beef,
+  Fish,
+  Hamburger,
+  Beer,
+  Pizza,
+  IceCreamCone,
+  Tag,
+  Newspaper,
+  ShoppingCart,
+  Pencil,
+  ChartLine,
+  MapPin,
+  TabletSmartphone,
+} from 'lucide-angular';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,13 +50,29 @@ import { LandingComponent } from './components/landing/landing.component';
     FooterComponent,
     ThemeToggleComponent,
     LocationMapComponent,
-    LandingComponent
+    LandingComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    LucideAngularModule.pick({
+      CupSoda,
+      Beef,
+      Fish,
+      Hamburger,
+      Beer,
+      Pizza,
+      IceCreamCone,
+      Tag,
+      Newspaper,
+      ShoppingCart,
+      Pencil,
+      ChartLine,
+      MapPin,
+      TabletSmartphone,
+    }),
   ],
   providers: [
     provideFirebaseApp(() =>
@@ -51,10 +86,10 @@ import { LandingComponent } from './components/landing/landing.component';
       })
     ),
     provideFirestore(() => getFirestore()),
-    provideAuth(()=> getAuth() ),
-    provideStorage(() => getStorage() )
+    provideAuth(() => getAuth()),
+    provideStorage(() => getStorage()),
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule { }
+export class AppModule {}

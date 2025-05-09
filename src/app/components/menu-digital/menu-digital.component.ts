@@ -50,6 +50,9 @@ export class MenuDigitalComponent implements OnInit {
   categoriaActiva = 'todas';
   carritoAbierto = false;
 
+  latitud: number | null = null;
+longitud: number | null = null;
+
   business: Business | null = null;
 
   isLoading = true;
@@ -76,6 +79,14 @@ export class MenuDigitalComponent implements OnInit {
           if (!this.business) {
             console.error('Negocio no encontrado');
             return;
+          }
+
+          if (this.business?.location?.lat && this.business?.location?.lng) {
+            this.latitud = this.business.location.lat;
+            this.longitud = this.business.location.lng;
+            console.log('Coordenadas del negocio:', this.latitud, this.longitud);
+          } else {
+            console.warn('El negocio no tiene coordenadas definidas.');
           }
 
           console.log('Negocio cargado:', this.business);

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MapaService } from '../../services/ubicacion.service';
 import * as L from 'leaflet';
 
@@ -8,18 +8,21 @@ import * as L from 'leaflet';
   templateUrl: './location-map.component.html',
   styleUrl: './location-map.component.css',
 })
-export class LocationMapComponent {
-  private readonly mapCenter: L.LatLngExpression = [12.114992, -86.236174]; // Coordenadas que deseas mostrar
-  private readonly zoomLevel: number = 15;
+export class LocationMapComponent implements OnInit {
+  @Input() latitude: number = 12.114992;  // valor por defecto
+  @Input() longitude: number = -86.236174; // valor por defecto
 
+  private readonly zoomLevel: number = 15;
   public markerUrl: string =
     'https://cdn-icons-png.flaticon.com/512/25/25613.png';
 
   constructor(private mapService: MapaService) {}
 
   ngOnInit(): void {
+    const mapCenter: L.LatLngExpression = [this.latitude, this.longitude];
+
     const map = this.mapService.initializeMap('map', {
-      center: this.mapCenter,
+      center: mapCenter,
       zoom: this.zoomLevel,
     });
 
@@ -28,8 +31,8 @@ export class LocationMapComponent {
     }).addTo(map);
 
     this.mapService.addMarker(
-      (this.mapCenter as L.LatLngTuple)[0],
-      (this.mapCenter as L.LatLngTuple)[1],
+      this.latitude,
+      this.longitude,
       this.markerUrl
     );
   }

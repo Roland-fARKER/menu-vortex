@@ -1,15 +1,15 @@
 <div class="menu-digital">
-  <app-header [title]="business?.name || 'name'" [logoUrl]="business?.logo || 'name'" (toggleCarritoEvent)="toggleCarrito()"></app-header>
+  <app-header
+    [title]="business?.name || 'No Disponoible'"
+    [logoUrl]="business?.logo || 'assets/placeholder.webp'"
+    (toggleCarritoEvent)="toggleCarrito()"
+  ></app-header>
 
   <!-- Banner del restaurante -->
   <div class="banner">
-    <img
-      [src]="business?.coverImage "
-      alt="Banner del restaurante"
-    />
+    <img [src]="business?.coverImage || 'assets/placeholder.webp' " alt="Banner del restaurante" />
     <div class="banner-content">
       <h2>Bienvenido a nuestro menú</h2>
-      <h3>{{business?.name}}</h3>
       <p>Descubre nuestros deliciosos platillos</p>
     </div>
   </div>
@@ -24,6 +24,7 @@
             [class.active]="categoriaActiva === 'todas'"
             (click)="cambiarCategoria('todas')"
           >
+            <lucide-icon name="Tag" size="16"></lucide-icon>
             Todas
           </button>
         </li>
@@ -32,11 +33,14 @@
             [class.active]="categoriaActiva === categoria.id"
             (click)="cambiarCategoria(categoria.id ?? '')"
           >
+            <lucide-icon
+              [name]="categoria.icono || 'tag'"
+              size="16"
+            ></lucide-icon>
             {{ categoria.nombre }}
           </button>
         </li>
       </ul>
-      
     </div>
 
     <!-- Productos -->
@@ -50,8 +54,12 @@
     </div>
   </main>
 
-    <!-- Sección de Mapa de Ubicación -->
-    <app-location-map></app-location-map>
+  <!-- Sección de Mapa de Ubicación -->
+  <app-location-map
+    *ngIf="latitud !== null && longitud !== null"
+    [latitude]="latitud"
+    [longitude]="longitud"
+  ></app-location-map>
 
   <!-- Sección Quiénes Somos -->
   <app-about-us></app-about-us>

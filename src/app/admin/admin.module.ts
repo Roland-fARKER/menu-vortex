@@ -10,6 +10,8 @@ import { AdminRoutingModule } from './admin.routing';
 import { CategoriesComponent } from './components/categories/categories.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettignsComponent } from './components/settigns/settigns.component';
+import { Beef, Beer, CupSoda, Fish, Hamburger, IceCreamCone, LucideAngularModule, Pizza, Tag } from 'lucide-angular';
+import { MenuLinkShareComponent } from './components/menu-link-share/menu-link-share.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,7 @@ import { SettignsComponent } from './components/settigns/settigns.component';
     CategoriesComponent,
     ProfileComponent,
     SettignsComponent,
+    MenuLinkShareComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +29,9 @@ import { SettignsComponent } from './components/settigns/settigns.component';
     ReactiveFormsModule,
     AdminRoutingModule,
     FormsModule,
+    LucideAngularModule.pick({
+          CupSoda, Beef, Fish, Hamburger, Beer, Pizza, IceCreamCone, Tag
+        })
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

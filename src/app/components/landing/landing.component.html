@@ -29,8 +29,8 @@
       </nav>
       <div class="header-actions">
         <app-theme-toggle></app-theme-toggle>
-        <a routerLink="/login" class="login-btn">Iniciar Sesión</a>
-        <a routerLink="/register" class="register-btn">Registrarse</a>
+        <a routerLink="/auth/login" class="login-btn">Iniciar Sesión</a>
+        <a routerLink="/auth/register" class="register-btn">Registrarse</a>
       </div>
       <button class="mobile-menu-toggle">
         <svg
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="hero-image">
-        <img src="assets/hero-mockup.png" alt="Menú Digital en dispositivos" />
+        <img src="assets/phone1.png" alt="Menú Digital en dispositivos" />
       </div>
     </div>
     <div class="hero-wave">
@@ -117,11 +117,8 @@
       </div>
 
       <div class="features-grid">
-        <div *ngFor="let feature of features" class="feature-card">
-          <div
-            class="feature-icon"
-            [innerHTML]="getIconSvg(feature.icon)"
-          ></div>
+        <div *ngFor="let feature of features" class="feature-card">    
+          <lucide-icon [name]="feature.icon" class="feature-icon" ></lucide-icon>
           <h3>{{ feature.title }}</h3>
           <p>{{ feature.description }}</p>
         </div>
@@ -403,7 +400,7 @@
             </div>
             <div class="contact-text">
               <h3>Teléfono</h3>
-              <p>+1 (555) 123-4567</p>
+              <p>+505 5733 7508</p>
             </div>
           </div>
 
@@ -428,11 +425,11 @@
             </div>
             <div class="contact-text">
               <h3>Email</h3>
-              <p>info&#64;vortexmenu.com</p>
+              <p>infomenu&#64;vortexni.net</p>
             </div>
           </div>
 
-          <div class="contact-item">
+          <!-- <div class="contact-item">
             <div class="contact-icon">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -453,7 +450,7 @@
               <h3>Dirección</h3>
               <p>Av. Paseo de la Reforma 222, Ciudad de México</p>
             </div>
-          </div>
+          </div> -->
 
           <div class="social-links">
             <h3>Síguenos</h3>

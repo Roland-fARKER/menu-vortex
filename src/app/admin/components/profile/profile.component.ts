@@ -53,6 +53,7 @@ export class ProfileComponent implements OnInit {
       description: [""],
       logo: [""],
       coverImage: [""],
+      whatsapp: [""],
       socialMedia: this.fb.group({
         facebook: [""],
         instagram: [""],
@@ -94,6 +95,7 @@ export class ProfileComponent implements OnInit {
         this.businessForm.patchValue({
           name: this.business.name,
           description: this.business.description || "",
+          whatsapp: this.business.whatsapp || "",
           socialMedia: {
             facebook: this.business.socialMedia?.facebook || "",
             instagram: this.business.socialMedia?.instagram || "",
@@ -166,6 +168,7 @@ export class ProfileComponent implements OnInit {
       businessData.logo = this.logoPreview
       businessData.coverImage = this.bannerPreview
 
+      console.log("Datos del negocio a actualizar:", businessData)
       this.authService.updateBusinessProfile(businessData).subscribe({
         next: (updatedBusiness) => {
           this.isLoading = false

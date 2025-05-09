@@ -18,6 +18,7 @@ import { ItemCarrito } from '../../models/producto.model';
 export class CarritoComponent implements OnChanges {
   @Input() abierto = false;
   @Output() cerrar = new EventEmitter<void>();
+  @Input() whatsapp: string = '';
 
   itemsCarrito: ItemCarrito[] = [];
   total = 0;
@@ -66,7 +67,7 @@ export class CarritoComponent implements OnChanges {
 
     this.carritoService.enviarPedidoPorWhatsApp(
       this.nombreCliente,
-      this.direccionCliente
+      this.direccionCliente,
     );
     await this.carritoService.limpiarCarrito();
     this.cerrarCarrito();
