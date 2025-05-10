@@ -1,29 +1,32 @@
 <div class="producto-card">
   <div class="producto-imagen">
     <img [src]="producto.imagen" [alt]="producto.nombre" />
+
+
+    <div class="preview-icon" (click)="mostrarPrevisualizacion = true" title="Ver imagen">
+      <lucide-icon [name]="externalLink" size="16" />
+    </div>
+
   </div>
+
   <div class="producto-contenido">
     <h3>{{ producto.nombre }}</h3>
     <p>{{ producto.descripcion }}</p>
     <div class="producto-footer">
       <span class="precio">C$ {{ producto.precio }}</span>
       <button class="agregar-btn" (click)="agregarAlCarrito()">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
         Agregar
       </button>
     </div>
+  </div>
+
+
+  <div class="imagen-modal" *ngIf="mostrarPrevisualizacion" (click)="mostrarPrevisualizacion = false">
+    <img [src]="producto.imagen" [alt]="producto.nombre" />
   </div>
 </div>
