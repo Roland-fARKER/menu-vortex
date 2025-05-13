@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ContactoService } from '../../services/contacto.service';
+import { Contacto } from '../../models/contacto';
 
 @Component({
   selector: 'app-landing',
@@ -8,13 +10,16 @@ import { Component } from '@angular/core';
 })
 export class LandingComponent {
   // Para el formulario de contacto
-  contactForm = {
+  contactForm: Contacto = {
     name: '',
     email: '',
     phone: '',
     businessName: '',
     message: '',
+    fechaEnvio: new Date()
   };
+
+  constructor(private contactoService: ContactoService) {}
 
   // Para las preguntas frecuentes
   faqs = [
@@ -118,8 +123,7 @@ export class LandingComponent {
       ],
       cta: 'Elegir Plan',
       highlighted: true,
-    }
-    
+    },
   ];
 
   // Métodos
@@ -128,16 +132,23 @@ export class LandingComponent {
   }
 
   submitContactForm(): void {
-    // En un entorno real, aquí enviaríamos el formulario a un backend
-    console.log('Formulario enviado:', this.contactForm);
-    alert('¡Gracias por contactarnos! Te responderemos a la brevedad.');
-    this.contactForm = {
-      name: '',
-      email: '',
-      phone: '',
-      businessName: '',
-      message: '',
-    };
+    this.contactoService
+      .guardarContacto(this.contactForm)
+      .then(() => {
+        alert('¡Gracias por contactarnos! Te responderemos a la brevedad.');
+        this.contactForm = {
+          name: '',
+          email: '',
+          phone: '',
+          businessName: '',
+          message: '',
+          fechaEnvio: new Date(),
+        };
+      })
+      .catch((error) => {
+        console.error('Error al enviar el formulario', error);
+        alert('Hubo un error al enviar el mensaje. Intenta nuevamente.');
+      });
   }
 
   scrollToSection(sectionId: string): void {
