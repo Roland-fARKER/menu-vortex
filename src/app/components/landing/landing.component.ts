@@ -9,6 +9,9 @@ import { Contacto } from '../../models/contacto';
   styleUrl: './landing.component.css',
 })
 export class LandingComponent {
+  // Estado del menú móvil
+  isMobileMenuOpen = false;
+
   // Para el formulario de contacto
   contactForm: Contacto = {
     name: '',
@@ -126,11 +129,17 @@ export class LandingComponent {
     },
   ];
 
-  // Métodos
+  // menú móvil
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  // Alternar preguntas frecuentes
   toggleFaq(index: number): void {
     this.faqs[index].isOpen = !this.faqs[index].isOpen;
   }
 
+  // Enviar formulario de contacto
   submitContactForm(): void {
     this.contactoService
       .guardarContacto(this.contactForm)
@@ -155,6 +164,7 @@ export class LandingComponent {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+      this.isMobileMenuOpen = false;
     }
   }
 }
