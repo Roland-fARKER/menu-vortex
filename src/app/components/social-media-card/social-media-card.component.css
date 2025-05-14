@@ -1,0 +1,78 @@
+/* Estilo para la card */
+.socialMediaCard{
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  text-align: center;
+  margin: 20px;
+}
+
+.project-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-color); /* Usar color de texto principal */
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 16px;
+  color: var(--text-secondary); /* Usar color de texto secundario */
+  margin-bottom: 20px;
+}
+
+.vortex {
+  font-weight: bold;
+  color: var(--primary-color); /* Color principal */
+}
+
+.socialMedia-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-icon {
+  display: inline-block;
+  font-size: 24px;
+  color: var(--text-color); /* Color de íconos social según el tema */
+  transition: color 0.3s ease;
+}
+
+.social-icon:hover {
+  color: var(--primary-hover); /* Hover con color primario más oscuro */
+}
+
+.social-icon i {
+  width: 32px;
+  height: 32px;
+  text-align: center;
+}
+
+/* Colores específicos para cada red social */
+.facebook:hover {
+  color: #3b5998;
+}
+
+.instagram:hover {
+  color: #e4405f;
+}
+
+.tiktok:hover {
+  color: #000000;
+}
+
+/* Responsividad */
+@media (max-width: 600px) {
+  .card {
+    max-width: 90%;
+  }
+
+  .social-icons {
+    gap: 10px;
+  }
+
+  .social-icon {
+    font-size: 20px;
+  }
+}

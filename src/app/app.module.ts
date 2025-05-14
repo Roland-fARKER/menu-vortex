@@ -1,9 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CarritoComponent } from './components/carrito/carrito.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -20,6 +18,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { LandingComponent } from './components/landing/landing.component';
+import { SocialMediaCardComponent } from './components/social-media-card/social-media-card.component';
 
 import {
   LucideAngularModule,
@@ -37,6 +36,9 @@ import {
   ChartLine,
   MapPin,
   TabletSmartphone,
+  Facebook,
+  Instagram,
+  Globe
 } from 'lucide-angular';
 
 @NgModule({
@@ -51,6 +53,7 @@ import {
     ThemeToggleComponent,
     LocationMapComponent,
     LandingComponent,
+    SocialMediaCardComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,6 +75,9 @@ import {
       ChartLine,
       MapPin,
       TabletSmartphone,
+      Facebook,
+      Instagram,
+      Globe
     }),
   ],
   providers: [
