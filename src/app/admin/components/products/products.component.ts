@@ -15,6 +15,7 @@ import {
   getDownloadURL,
 } from '@angular/fire/storage';
 import { AuthService } from '../../../auth/services/auth.service';
+import { ImageOptimizationService } from '../../../services/imageOptimization.service';
 
 @Component({
   selector: 'app-products',
@@ -46,7 +47,8 @@ export class ProductsComponent implements OnInit {
     private fb: FormBuilder,
     private categoriasService: CategoriesService,
     private storage: Storage,
-    private authService: AuthService
+    private authService: AuthService,
+    private imageOptimizationService: ImageOptimizationService
   ) {
     this.productoForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
@@ -54,7 +56,7 @@ export class ProductsComponent implements OnInit {
       descripcion: ['', [Validators.required]],
       categoria: ['', [Validators.required]],
       imagen: [''],
-      disponible: [true]
+      disponible: [true],
     });
 
     this.authService.authState$.subscribe((state) => {
@@ -193,28 +195,32 @@ export class ProductsComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // Validar que sea una imagen
       if (!file.type.startsWith('image/')) {
         alert('Por favor, selecciona un archivo de imagen válido.');
         return;
       }
 
-      // Mostrar previsualización
-      this.imagePreview = URL.createObjectURL(file);
-
       try {
-        const imageUrl = await this.uploadImage(file); // 🔥 subir a Firebase
-        this.productoForm.patchValue({ imagen: imageUrl }); // asignar la URL al formulario
+        
+        const optimizedFile =
+          await this.imageOptimizationService.optimizeImageToWebp(file, 0.5);
+
+        // Mostrar previsualización usando la imagen optimizada (local)
+        this.imagePreview = URL.createObjectURL(optimizedFile);
+
+        // Subir la imagen optimizada y obtener URL
+        const imageUrl = await this.uploadImage(optimizedFile);
+        this.productoForm.patchValue({ imagen: imageUrl });
       } catch (error) {
-        console.error('Error al subir la imagen:', error);
-        alert('Error al subir la imagen. Intenta nuevamente.');
+        console.error('Error al optimizar o subir la imagen:', error);
+        alert('Error al procesar la imagen. Intenta nuevamente.');
       }
     }
   }
 
   async uploadImage(file: File): Promise<string> {
     const timestamp = Date.now();
-    const filePath = `productos/${timestamp}_${file.name}`;
+    const filePath = `productos/${this.businessId}/${timestamp}_${file.name}`;
     const storageRef = ref(this.storage, filePath);
 
     // Subir la imagen
